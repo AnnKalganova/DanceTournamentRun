@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div>
+    <h1 class="display-4">Kinezis cup</h1>
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#home">Регистрация</a></li>
+        <li>   </li>
+        <li style="margin-left:20px;"><a data-toggle="tab" href="#Tab1">Судейство</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="home" class="tab-pane in active">
+            <form asp-controller="myController" asp-action="myAction1" method="post">
+                <h4 style="margin-top:15px;">Ссылки на регистрацию</h4>
+                <p>Some content.</p>
+                <input type="submit" name="GO" value="Value1" />
+            </form>
+        </div>
+        <div id="Tab1" class="tab-pane">
+            <form asp-controller="myController" asp-action="myAction2" method="post">
+                <h4 style="margin-top:15px;">Ссылки на судейство</h4>
+                <p>Some content in here.</p>
+                <input type="submit" name="GO" value="Value2" />
+            </form>
+        </div>
+    </div>
+</div>
