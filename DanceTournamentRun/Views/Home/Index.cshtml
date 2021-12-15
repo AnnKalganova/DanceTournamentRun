@@ -12,18 +12,51 @@
 
     <div class="tab-content">
         <div id="home" class="tab-pane in active">
-            <form asp-controller="myController" asp-action="myAction1" method="post">
-                <h4 style="margin-top:15px;">Ссылки на регистрацию</h4>
-                <p>Some content.</p>
-                <input type="submit" name="GO" value="Value1" />
-            </form>
+            <h4 style="margin-top:15px;">Ссылки на регистрацию</h4>
+            <div style="width:40%; display:flex; flex-direction:row; justify-content:space-between;">
+                <form class="add-form" method="Get" action="/Home/GetRegLinks">
+                    <input style="margin:10px 0;" type="submit" name="genr_reg" value="Ссылки" />
+                </form>
+                <form class="add-form" method="Get" action="/Home/GetQR">
+                    <input type="text" name="link" placeholder="Введите ссылку" />
+                    <input style="margin:10px 0;" type="submit" name="genr_reg" value="QR код" />
+                </form>
+            </div> 
+
+
+            @if (ViewBag.RegGroupsId != null)
+             {
+                @foreach (var id in ViewBag.RegGroupsId)
+                 {
+                    <p>https://localhost:44362/api/Registration/pairsByGroup/@id</p>
+                 }
+             }
+            @if (@ViewBag.QrCodeUri != null)
+             {
+                 <a href="@ViewBag.QrCodeUri">@ViewBag.QrCodeUri</a>
+             }
         </div>
         <div id="Tab1" class="tab-pane">
-            <form asp-controller="myController" asp-action="myAction2" method="post">
-                <h4 style="margin-top:15px;">Ссылки на судейство</h4>
-                <p>Some content in here.</p>
-                <input type="submit" name="GO" value="Value2" />
-            </form>
+            <h4 style="margin-top:15px;">Ссылки на судейство</h4>
+            <div style="width:60%; display:flex; flex-direction:row; justify-content:space-between;">
+                <form class="add-form" method="Get" action="/Home/GetRefLinks">
+                    <input type="text" name="lastname" placeholder="Фамилия судьи"/>
+                    <input style="margin:10px 0;" type="submit" name="genr_reg" value="Ссылки" />
+                </form>
+                <form class="add-form" method="Get" action="/Home/GetQR">
+                    <input type="text" name="link" placeholder="Введите ссылку" />
+                    <input style="margin:10px 0;" type="submit" name="genr_reg" value="QR код" />
+                </form>
+            </div>
+
+            @if (ViewBag.RefGroupsId != null)
+            {
+                @foreach (var id in ViewBag.RefGroupsId)
+                {
+                    <p>https://localhost:44362/api/Refereeing/@ViewBag.RefLastname/@id</p>
+                }
+            }
         </div>
     </div>
 </div>
+
