@@ -5,16 +5,16 @@ using System.Collections.Generic;
 
 namespace DanceTournamentRun.Models
 {
-    public partial class City
+    public partial class Role
     {
-        public City()
+        public Role()
         {
-            Clubs = new HashSet<Club>();
+            Users = new HashSet<User>();
         }
 
         public long Id { get; set; }
         public string Name { get; set; }
 
-        public virtual ICollection<Club> Clubs { get; set; }
+        public virtual ICollection<User> Users { get; set; }
     }
 }

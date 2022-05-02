@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace DanceTournamentRun.Models
 {
-    public partial class GroupsReferee
+    public partial class GroupsDance
     {
         public long Id { get; set; }
         public long GroupId { get; set; }
-        public long RefereeId { get; set; }
+        public long DanceId { get; set; }
 
+        public virtual Dance Dance { get; set; }
         public virtual Group Group { get; set; }
-        public virtual Referee Referee { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 using DanceTournamentRun.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -23,21 +24,29 @@ namespace DanceTournamentRun
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+
         public void ConfigureServices(IServiceCollection services)
         {
             string con = "Server=(localdb)\\mssqllocaldb;Database=DanceTournamentRun;Trusted_Connection=True;";
-            // óñòàíàâëèâàåì êîíòåêñò äàííûõ
+     
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(con));
 
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowMyOrigin",
-                builder => builder.WithOrigins("http://localhost:19006", "http://38-4nu.anonymous.regapp.exp.direct", "http://192.168.1.14:19000").AllowAnyMethod());
+                builder => builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader());
+                //WithOrigins("http://localhost:19006", "http://172.20.10.9:19000", "http://127.0.0.1:19000") WithOrigins("*")"http://localhost:19006", "http://38-4nu.anonymous.regapp.exp.direct", "http://192.168.1.14:19000"
             });
+          
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                    options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                });
+
             services.AddControllersWithViews().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-
             // Make sure you call this previous to AddMvc
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             //services.AddControllers()
@@ -63,8 +72,10 @@ namespace DanceTournamentRun
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseCors("AllowMyOrigin");
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
