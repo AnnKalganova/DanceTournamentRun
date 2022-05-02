@@ -5,19 +5,18 @@ using System.Collections.Generic;
 
 namespace DanceTournamentRun.Models
 {
-    public partial class Department
+    public partial class Tournament
     {
-        public Department()
+        public Tournament()
         {
             Groups = new HashSet<Group>();
         }
 
         public long Id { get; set; }
-        public DateTime BeginTime { get; set; }
-        public DateTime RegistrationTime { get; set; }
-        public long TournamentId { get; set; }
+        public string Name { get; set; }
+        public long UserId { get; set; }
 
-        public virtual Tournament Tournament { get; set; }
+        public virtual User User { get; set; }
         public virtual ICollection<Group> Groups { get; set; }
     }
 }

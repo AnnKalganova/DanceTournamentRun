@@ -24,18 +24,17 @@ namespace DanceTournamentRun.ApiControllers
 
         // GET: api/Registration/groupsByDept/3
         // get groups by department's id
-        [HttpGet("groupsByDept/{deptId}")]
-        public async Task<ActionResult<IEnumerable<Group>>> GetGroupsByDepartment(long deptId)
-        {
-            var groups = await _context.Groups.Where(x => x.DepartmentId == deptId).ToListAsync();
-            if (groups.Count() == 0)
-                return NotFound();
-            return groups;
-        }
+        //[HttpGet("groupsByDept/{deptId}")]
+        //public async Task<ActionResult<IEnumerable<Group>>> GetGroupsByDepartment(long deptId)
+        //{
+        //    var groups = await _context.Groups.Where(x => x.DepartmentId == deptId).ToListAsync();
+        //    if (groups.Count() == 0)
+        //        return NotFound();
+        //    return groups;
+        //}
 
         // GET: api/Registration/pairsByGroup/5
         //get pairs by group's id 
-        //TODO:  add sorting and filter
         [HttpGet("pairsByGroup/{grId}")]
         public async Task<ActionResult<IEnumerable<Pair>>> GetPairsByGroup(long grId)
         {
@@ -141,13 +140,6 @@ namespace DanceTournamentRun.ApiControllers
             return _context.Pairs.Any(e => e.Id == id);
         }
 
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<Pair>>> SearchPair( )
-        //{
-        //    //generateRefereeUrl()
-        //    //generateRefereeQR()
-        //    return await _context.Pairs.ToListAsync();
-        //}
 
 
     }

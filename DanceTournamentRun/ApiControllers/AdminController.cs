@@ -61,29 +61,28 @@ namespace DanceTournamentRun.ApiControllers
         }
 
         // GET: api
-        [HttpGet]
-        [HttpGet("refLinks")]
-        public ActionResult<RefLinksViewModel> GetRefereeLink(string lastname)
-        {
-            var refLinks = new RefLinksViewModel();
+        //[HttpGet("refLinks")]
+        //public ActionResult<RefLinksViewModel> GetRefereeLink(string lastname)
+        //{
+        //    var refLinks = new RefLinksViewModel();
 
-            IQueryable<GroupsReferee> groupsReferee = _context.GroupsReferees.Include(x => x.Referee);
-            if (lastname != null)
-            {
-                groupsReferee = groupsReferee.Where(g => g.Referee.Lastname == lastname);
-            }
-            if (groupsReferee.Count() == 0 || lastname == null)
-            {
-                return null;
-            }
-            foreach (var gr in groupsReferee)
-            {
-                refLinks.groupsId.Add(gr.GroupId);
-            }
-            refLinks.refLastname = lastname;
+        //    IQueryable<GroupsReferee> groupsReferee = _context.GroupsReferees.Include(x => x.Referee);
+        //    if (lastname != null)
+        //    {
+        //        groupsReferee = groupsReferee.Where(g => g.Referee.Lastname == lastname);
+        //    }
+        //    if (groupsReferee.Count() == 0 || lastname == null)
+        //    {
+        //        return null;
+        //    }
+        //    foreach (var gr in groupsReferee)
+        //    {
+        //        refLinks.groupsId.Add(gr.GroupId);
+        //    }
+        //    refLinks.refLastname = lastname;
 
-            return refLinks;
-        }
+        //    return refLinks;
+        //}
 
 
 
