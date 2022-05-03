@@ -12,39 +12,66 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DanceTournamentRun.Controllers
 {
     [Authorize(Roles = "admin")]
-    public class HomeController : Controller
+    public class AdminController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public AdminController(ApplicationDbContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
-            if (TempData["RegGroupsId"] != null)
+            // var userId = UserHelper.GetUserId();
+            var userId = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            Tournament tournament = _context.Tournaments.FirstOrDefault(p => p.UserId == userId);
+            if (tournament == null)
             {
-                ViewBag.RegGroupsId = TempData["RegGroupsId"];
+                //redirect to create tournament
+                return RedirectToAction("CreateTournament");
             }
-            if (TempData["QrCodeUri"] != null)
+            if ((bool)tournament.IsTournamentRun)
             {
-                ViewBag.QrCodeUri = TempData["QrCodeUri"];
+                //redirect to tournament run 
+
             }
-            if (TempData["RefGroupsId"] != null)
+
+            return View("SetupTournament");
+
+
+            //if (TempData["RefLastname"] != null)
+            //{
+            //    ViewBag.RefLastname = TempData["RefLastname"];
+            //}
+
+        }
+
+        [HttpGet]
+        public ActionResult CreateTournament()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateTournament(CreateTournModel model)
+        {
+            if (ModelState.IsValid)
             {
-                ViewBag.RefGroupsId = TempData["RefGroupsId"];
+                var userId = UserHelper.GetUserId();
+                Tournament tournament = new Tournament { Name = model.Name, UserId = userId, IsTournamentRun = false };
+                _context.Tournaments.Add(tournament);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
             }
-            if (TempData["RefLastname"] != null)
-            {
-                ViewBag.RefLastname = TempData["RefLastname"];
-            }
-                return View();
+            return View(model);
         }
 
         public ActionResult GetRegLinks()

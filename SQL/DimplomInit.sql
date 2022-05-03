@@ -43,6 +43,10 @@ REFERENCES [dbo].[Users] (Id)
 ON DELETE CASCADE
 GO
 
+ALTER TABLE  [dbo].[Tournaments]
+ADD isTournamentRun bit DEFAULT(0);
+GO
+
 CREATE TABLE [dbo].[Groups](
 	[Id] [bigint] IDENTITY(1,1) NOT NULL,
 	[Name] [nvarchar](max) NULL,

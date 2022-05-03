@@ -133,6 +133,10 @@ namespace DanceTournamentRun.Models
 
             modelBuilder.Entity<Tournament>(entity =>
             {
+                entity.Property(e => e.IsTournamentRun)
+                    .HasColumnName("isTournamentRun")
+                    .HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.Name).IsRequired();
 
                 entity.HasOne(d => d.User)

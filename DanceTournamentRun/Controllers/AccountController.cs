@@ -43,7 +43,7 @@ namespace DanceTournamentRun.Controllers
 
                     await Authenticate(user); // аутентификация
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Admin");
                 }
                 else
                     ModelState.AddModelError("", "Некорректные логин и(или) пароль");
@@ -68,7 +68,7 @@ namespace DanceTournamentRun.Controllers
                 {
                     await Authenticate(user); // аутентификация
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Admin");
                 }
                 ModelState.AddModelError("", "Некорректные логин и(или) пароль");
             }

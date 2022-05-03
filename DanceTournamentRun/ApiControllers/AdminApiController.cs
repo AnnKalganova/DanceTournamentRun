@@ -15,11 +15,11 @@ namespace DanceTournamentRun.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdminController : ControllerBase
+    public class AdminApiController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        public AdminController(ApplicationDbContext context)
+        public AdminApiController(ApplicationDbContext context)
         {
             _context = context;
         }

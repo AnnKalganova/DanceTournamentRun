@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31911.196
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DanceTournamentRun", "DanceTournamentRun\DanceTournamentRun.csproj", "{B22A7B13-AFD8-48A4-8EB6-75FDC8D90105}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DanceTournamentRun", "DanceTournamentRun\DanceTournamentRun.csproj", "{B22A7B13-AFD8-48A4-8EB6-75FDC8D90105}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DanceTournamentRun.Models", "DanceTournamentRun.Models\DanceTournamentRun.Models.csproj", "{07C98D13-AC2E-43F4-8461-72D2AE70824B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DanceTournamentRun.Models", "DanceTournamentRun.Models\DanceTournamentRun.Models.csproj", "{07C98D13-AC2E-43F4-8461-72D2AE70824B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
