@@ -29,12 +29,11 @@ namespace DanceTournamentRun.Controllers
 
         public IActionResult Index()
         {
-            // var userId = UserHelper.GetUserId();
-            var userId = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            Console.WriteLine(this.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            long userId = long.Parse(this.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             Tournament tournament = _context.Tournaments.FirstOrDefault(p => p.UserId == userId);
             if (tournament == null)
             {
-                //redirect to create tournament
                 return RedirectToAction("CreateTournament");
             }
             if ((bool)tournament.IsTournamentRun)
@@ -43,6 +42,7 @@ namespace DanceTournamentRun.Controllers
 
             }
 
+            ViewBag.TournName = tournament.Name;
             return View("SetupTournament");
 
 
@@ -65,13 +65,20 @@ namespace DanceTournamentRun.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userId = UserHelper.GetUserId();
+                long userId = long.Parse(this.User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 Tournament tournament = new Tournament { Name = model.Name, UserId = userId, IsTournamentRun = false };
                 _context.Tournaments.Add(tournament);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(model);
+        }
+
+
+        public ActionResult ViewGroups()
+        {
+            ViewBag.group = "Дети 2 Е";
+            return PartialView("Groups");
         }
 
         public ActionResult GetRegLinks()

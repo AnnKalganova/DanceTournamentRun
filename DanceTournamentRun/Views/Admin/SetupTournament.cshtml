@@ -1,1 +1,30 @@
-﻿<div>Здесь настройка турнира</div>
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@{
+    ViewData["Title"] = "Setup Page";
+}
+
+<div>
+    <h1 class="display-4">@ViewBag.TournName</h1>
+    <ul class="nav nav-tabs col-md-5">
+        <li class="nav-item">
+                             <a class="nav-link" data-toggle="tab" asp-action="ViewGroups" asp-controller="Admin">Группы</a></li>
+        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#referees">Судьи</a></li>
+        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#registrators">Организаторы</a></li>
+    </ul>
+
+
+    <div class="tab-content">
+        <div id="groups" class="tab-pane">
+            @await Html.PartialAsync("Groups")
+        </div>
+        <div id="referees" class="tab-pane">
+            Здесь будут судьи
+        </div>
+        <div id="registrators" class="tab-pane">
+            Здесь будут организаторы
+        </div>
+    </div>
+</div>
