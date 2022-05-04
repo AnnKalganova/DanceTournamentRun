@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -28,6 +29,13 @@ namespace DanceTournamentRun.Models
         public virtual DbSet<Tournament> Tournaments { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UsersGroup> UsersGroups { get; set; }
+
+        public ICollection<Group> GetGroups(long tournId)
+        {
+            //TODO: заменить на функции внутри бд
+
+            return null;
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -69,6 +69,8 @@ namespace DanceTournamentRun
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseDefaultFiles();
+
 
             app.UseRouting();
 

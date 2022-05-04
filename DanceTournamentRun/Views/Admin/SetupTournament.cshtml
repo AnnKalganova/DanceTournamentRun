@@ -1,16 +1,13 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
-
+﻿
+@model Tournament
 @{
     ViewData["Title"] = "Setup Page";
 }
 
 <div>
-    <h1 class="display-4">@ViewBag.TournName</h1>
+    <h1 class="display-4">@Model.Name</h1>
     <ul class="nav nav-tabs col-md-5">
-        <li class="nav-item">
-                             <a class="nav-link" data-toggle="tab" asp-action="ViewGroups" asp-controller="Admin">Группы</a></li>
+        <li class="nav-item"><a onclick="viewGroups(@Model.Id)" class="nav-link" data-toggle="tab" href="#groups">Группы</a></li>
         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#referees">Судьи</a></li>
         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#registrators">Организаторы</a></li>
     </ul>
@@ -18,7 +15,9 @@
 
     <div class="tab-content">
         <div id="groups" class="tab-pane">
-            @await Html.PartialAsync("Groups")
+            <div id="groupsTable">
+
+            </div>
         </div>
         <div id="referees" class="tab-pane">
             Здесь будут судьи
@@ -28,3 +27,7 @@
         </div>
     </div>
 </div>
+
+
+
+

@@ -43,7 +43,7 @@ namespace DanceTournamentRun.Controllers
             }
 
             ViewBag.TournName = tournament.Name;
-            return View("SetupTournament");
+            return View("SetupTournament",tournament);
 
 
             //if (TempData["RefLastname"] != null)
@@ -71,14 +71,40 @@ namespace DanceTournamentRun.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
+            model.Name = "Ввведите название";
             return View(model);
         }
 
-
-        public ActionResult ViewGroups()
+        
+        public PartialViewResult ViewGroups(long? tournId)
         {
-            ViewBag.group = "Дети 2 Е";
-            return PartialView("Groups");
+            //TODO: заменить на обращение к запросам внутри бд
+            if(tournId != null)
+            {
+                var groups = _context.Groups.Where(p => p.TournamentId == tournId);
+                ViewBag.tournamentId = tournId;
+                ViewBag.groups = groups;
+                return PartialView("Groups");
+            }
+            ViewBag.message = "Id турнира - " + tournId;
+            //TODO: исправить на вывод ошибки
+            return PartialView("Error");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddGroup(long? tournId, string Name)
+        {
+            if (Name != null && tournId != null)
+            {
+                var groups = _context.Groups.Where(g => g.TournamentId == tournId).Select(x => x.Number);
+                var newNumber = groups.Max() + 1;
+                Group group = new Group { Name = Name, Number = newNumber, TournamentId = (long)tournId };
+                _context.Groups.Add(group);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("ViewGroups", new { tournId = tournId });
+            }
+            return NotFound();
         }
 
         public ActionResult GetRegLinks()

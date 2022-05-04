@@ -2,3 +2,20 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+
+var viewGroups = function (tournId) {
+    $.ajax({
+        url: "/Admin/ViewGroups",
+        data: { "tournId": tournId},
+        type: "GET",
+        success: function (data) {
+            $('#groupsTable').html(data);
+        },
+        error: function () {
+            $("#groupsTable").html("ERROR");
+        }
+    });
+};
+
+
+

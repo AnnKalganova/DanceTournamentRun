@@ -1,1 +1,48 @@
-﻿<div>Это группа - @ViewBag.group</div>
+﻿@{
+    IQueryable<Group> groups = ViewBag.groups;
+}
+<div class="d-flex">
+
+    <table class="table table-striped table-borderless col-md-7">
+        <thead>
+            <tr>
+                <th scope="col">Порядок</th>
+                <th scope="col">Название</th>
+                <th scope="col">Танцы</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>2</td>
+                <td>Дети 2</td>
+                <td>Танцы</td>
+                <td><a href="/K/Upd?id=Пн">Изменить</a></td>
+            </tr>
+            @foreach (var item in groups)
+            {
+                <tr>
+                    <td>@item.Number</td>
+                    <td>@item.Name</td>
+                    <td>Танцы</td>
+                    <td><a href="/K/Upd?id=@item.Id&day=Пн">Изменить</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button id="showModalAddGroup" type="button" class="btn btn-info h-25 .col-md-3 ">Добавить группу</button>
+</div>
+
+<h3 id="message"></h3>
+<dialog id="dialogAddGroup">
+    Введите название группы :
+    <br />
+    <br />
+    <input id="groupName" type="text" />
+    <br />
+    <br />
+    <button id="ok"  onclick="addGroup(@ViewBag.tournamentId)" type="button">Сохранить</button>
+    <button id="cancel" type="button">Отмена</button>
+</dialog>
+
+<script src="~/js/ModalDialog.js" asp-append-version="true"></script>
