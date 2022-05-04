@@ -10,5 +10,7 @@ namespace DanceTournamentRun.Models
     {
         [Required(ErrorMessage = "Не указано название")]
         public string Name { get; set; }
+
+        public long TournamentId { get; set; }
     }
 }

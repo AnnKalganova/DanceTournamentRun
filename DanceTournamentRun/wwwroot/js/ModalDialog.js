@@ -1,41 +1,30 @@
-var showModal = document.getElementById('showModalAddGroup');
-/*var ok = document.getElementById('ok');*/
-var cancel = document.getElementById('cancel');
-var dialog = document.getElementById('dialogAddGroup');
-var groupName = document.getElementById('groupName');
-var message = document.getElementById('message');
 
-showModal.addEventListener('click', function () {
-    if (!dialog.open) {
-        dialog.showModal();
-    }
-    else {
-        message.innerHTML = 'Dialog is already open!';
-    }
+
+var groupName = document.getElementById('groupName');
+var cancel = document.getElementById('cancelAddGrp');
+var close = document.getElementById('closeAddGrp');
+
+cancel.addEventListener('click', function () {
+    groupName.value = "";
 });
 
+close.addEventListener('click', function () {
+    groupName.value = "";
+});
 
-var addGroup = function (tournId) {
-    dialog.close();
+$('#submitAddGrp').on('click', function (e) {
+   /* e.preventDefault();*/
     $.ajax({
-        url: "/Admin/AddGroup",
-        data: { "tournId": tournId, "Name": groupName.value },
         type: "POST",
+        url: "/Admin/AddGroup",
+        data: $('#addGrForm').serialize(),
         success: function (data) {
             $('#groupsTable').html(data);
         },
         error: function () {
             message.innerHTML = 'ERROR';
+            alert('Error');
         }
+
     });
-    groupName.value = "";
-
-}
-
-
-if (cancel) {
-    cancel.addEventListener('click', function () {
-        message.innerHTML = 'You cancelled the dialog';
-        dialog.close();
-    });
-}
+});

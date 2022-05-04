@@ -91,18 +91,19 @@ namespace DanceTournamentRun.Controllers
             return PartialView("Error");
         }
 
+        //long? tournId, string Name
         [HttpPost]
-        public async Task<ActionResult> AddGroup(long? tournId, string Name)
+        public async Task<ActionResult> AddGroup(CreateGroupModel model)
         {
-            if (Name != null && tournId != null)
+            if (ModelState.IsValid)
             {
-                var groups = _context.Groups.Where(g => g.TournamentId == tournId).Select(x => x.Number);
-                var newNumber = groups.Max() + 1;
-                Group group = new Group { Name = Name, Number = newNumber, TournamentId = (long)tournId };
+                var groups = _context.Groups.Where(g => g.TournamentId == model.TournamentId).Select(x => x.Number);
+                var newNumber = groups.Count() != 0 ? groups.Max() + 1 : 1;
+                Group group = new Group { Name = model.Name, Number = newNumber, TournamentId = model.TournamentId };
                 _context.Groups.Add(group);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("ViewGroups", new { tournId = tournId });
+                return RedirectToAction("ViewGroups", new { tournId = model.TournamentId });
             }
             return NotFound();
         }

@@ -1,4 +1,5 @@
-﻿@{
+﻿@model DanceTournamentRun.Models.CreateGroupModel
+@{
     IQueryable<Group> groups = ViewBag.groups;
 }
 <div class="d-flex">
@@ -13,12 +14,6 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>2</td>
-                <td>Дети 2</td>
-                <td>Танцы</td>
-                <td><a href="/K/Upd?id=Пн">Изменить</a></td>
-            </tr>
             @foreach (var item in groups)
             {
                 <tr>
@@ -30,19 +25,44 @@
             }
         </tbody>
     </table>
-    <button id="showModalAddGroup" type="button" class="btn btn-info h-25 .col-md-3 ">Добавить группу</button>
+    <button type="button" class="btn btn-info  h-25 .col-md-3" data-toggle="modal" data-target="#dialogAddGroup">
+        Добавить группу
+    </button>
 </div>
 
 <h3 id="message"></h3>
-<dialog id="dialogAddGroup">
-    Введите название группы :
-    <br />
-    <br />
-    <input id="groupName" type="text" />
-    <br />
-    <br />
-    <button id="ok"  onclick="addGroup(@ViewBag.tournamentId)" type="button">Сохранить</button>
-    <button id="cancel" type="button">Отмена</button>
-</dialog>
+
+<div class="modal fade" id="dialogAddGroup" tabindex="-1" role="dialog" aria-labelledby="dialogAddGroupCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dialogAddGroupCenterTitle">Добавление группы</h5>
+                <button id="closeAddGrp" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="addGrForm" asp-anti-forgery="true">
+                    <div class="validation" asp-validation-summary="ModelOnly"></div>
+                    <input type="hidden" id="postId" name="TournamentId" value="@ViewBag.tournamentId">
+                    <div>
+                        <div class="form-group">
+                            <label asp-for="Name" class="col-form-label">Введите название группы</label>
+                            <input id="groupName" type="text" asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+                <div class="modal-footer">
+                    <button id="cancelAddGrp" type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                    <button id="submitAddGrp" type="submit" form="addGrForm" class="btn btn-primary" data-dismiss="modal">Сохранить</button>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
 
 <script src="~/js/ModalDialog.js" asp-append-version="true"></script>
