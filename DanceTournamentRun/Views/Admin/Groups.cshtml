@@ -1,6 +1,6 @@
 ﻿@model DanceTournamentRun.Models.CreateGroupModel
 @{
-    IQueryable<Group> groups = ViewBag.groups;
+    ICollection<GroupViewModal> groups = ViewBag.groups;
 }
 <div class="d-flex">
 
@@ -19,8 +19,14 @@
                 <tr>
                     <td>@item.Number</td>
                     <td>@item.Name</td>
-                    <td>Танцы</td>
-                    <td><a href="/K/Upd?id=@item.Id&day=Пн">Изменить</a></td>
+                    <td>@{ var dances = "";}
+                    @foreach (var dance in item.Dances)
+                    {
+                        dances += dance.Name + " ";
+                    }
+                    @dances
+                    </td>
+                    <td><a href="/K/Upd?id=Пн">Изменить</a></td>
                 </tr>
             }
         </tbody>
@@ -48,10 +54,24 @@
                     <input type="hidden" id="postId" name="TournamentId" value="@ViewBag.tournamentId">
                     <div>
                         <div class="form-group">
-                            <label asp-for="Name" class="col-form-label">Введите название группы</label>
-                            <input id="groupName" type="text" asp-for="Name" class="form-control" />
+                            <label asp-for="Name" class="col-form-label">Название</label>
+                            <input id="groupName" type="text" asp-for="Name" class="form-control" placeholder="Введите название группы" />
                             <span asp-validation-for="Name" />
                         </div>
+                        <label class="control-label" for="dances">Танцы:</label>
+                        <div class="control-group" id="dances">
+                            <div class="controls">
+                                <div class="entry input-group form-group">
+                                    <input class="form-control" name="Dances[0]" placeholder="Введите название танца" type="text">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-success btn-add" type="button">
+                                            <span class="oi oi-plus" title="icon name" aria-hidden="true"></span>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <small>Нажмите  <span class="oi oi-plus" title="icon name" aria-hidden="true"></span> чтобы добавить еще один танец :)</small>
                     </div>
                 </form>
             </div>
@@ -64,5 +84,26 @@
     </div>
 </div>
 
+
+
+
+@*<form id="ajaxForm" class="form-vertical" role="form" autocomplete="off" method="POST" action="/ajaxRequest/">
+    <fieldset>
+        
+        <div class="col-xs-12">
+           
+        </div>
+        <div class="pull-right">
+            <br>
+            <div class="btn-group col-xs-12">
+                <button type="button" class="btn btn-primary" id="sendSerialized">Serialized form</button>
+
+                <button type="button" class="btn btn-default" id="sendQueryString">Query string</button>
+                <button type="button" class="btn btn-warning" id="sendPlainJSon">Plain json</button>
+                <button type="button" class="btn btn-success" id="sendTreeJSon">Tree json</button>
+            </div>
+        </div>
+    </fieldset>
+</form>*@
 
 <script src="~/js/ModalDialog.js" asp-append-version="true"></script>

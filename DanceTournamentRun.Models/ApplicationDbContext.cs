@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.Linq;
+using Microsoft.Data.SqlClient;
+
 
 #nullable disable
 
@@ -35,6 +38,13 @@ namespace DanceTournamentRun.Models
             //TODO: заменить на функции внутри бд
 
             return null;
+        }
+
+        public ICollection<Dance> GetDances(long groupId)
+        {
+            SqlParameter param = new SqlParameter("@groupId", groupId);
+            var dances = Dances.FromSqlRaw("EXEC GetDances @groupId", param).ToList();
+            return dances;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

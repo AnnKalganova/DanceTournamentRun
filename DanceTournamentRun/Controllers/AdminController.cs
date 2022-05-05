@@ -83,12 +83,32 @@ namespace DanceTournamentRun.Controllers
             {
                 var groups = _context.Groups.Where(p => p.TournamentId == tournId);
                 ViewBag.tournamentId = tournId;
-                ViewBag.groups = groups;
+                ViewBag.groups = GetGroupViewModels(groups);
                 return PartialView("Groups");
             }
-            ViewBag.message = "Id турнира - " + tournId;
+          
             //TODO: исправить на вывод ошибки
             return PartialView("Error");
+        }
+
+        private ICollection<GroupViewModal> GetGroupViewModels(IQueryable<Group> groups)
+        {
+            ICollection<GroupViewModal> groupViews = new List<GroupViewModal>();
+            foreach (var group in groups)
+            {
+                GroupViewModal groupView = new GroupViewModal() ;
+                groupView.GroupId = group.Id;
+                groupView.Name = group.Name;
+                groupView.Number = group.Number;
+
+                using (ApplicationDbContext db = new ApplicationDbContext())
+                {
+                    groupView.Dances = db.GetDances(group.Id);
+                }
+                groupViews.Add(groupView);
+                //TODO: отсортировать по Number
+            }
+            return groupViews;
         }
 
         //long? tournId, string Name
@@ -97,11 +117,22 @@ namespace DanceTournamentRun.Controllers
         {
             if (ModelState.IsValid)
             {
-                var groups = _context.Groups.Where(g => g.TournamentId == model.TournamentId).Select(x => x.Number);
-                var newNumber = groups.Count() != 0 ? groups.Max() + 1 : 1;
+                var numbers = _context.Groups.Where(g => g.TournamentId == model.TournamentId).Select(x => x.Number);
+                var newNumber = numbers.Count() != 0 ? numbers.Max() + 1 : 1;
                 Group group = new Group { Name = model.Name, Number = newNumber, TournamentId = model.TournamentId };
                 _context.Groups.Add(group);
                 await _context.SaveChangesAsync();
+
+                foreach (var dance in model.Dances)
+                {
+                    Dance newDance = new Dance { Name = dance };
+                    _context.Dances.Add(newDance);
+                    await _context.SaveChangesAsync();
+
+                    GroupsDance groupsDance = new GroupsDance { GroupId = group.Id, DanceId = newDance.Id };
+                    _context.GroupsDances.Add(groupsDance);
+                    await _context.SaveChangesAsync();
+                }
 
                 return RedirectToAction("ViewGroups", new { tournId = model.TournamentId });
             }
