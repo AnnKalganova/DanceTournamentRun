@@ -1,0 +1,20 @@
+﻿.gr-btn {
+    color: #212F3D;
+}
+.gr-btn:hover{
+    text-decoration:none;
+}
+
+.gr-btn-del{
+    margin-left:14px;
+}
+
+.gr-btn-edit:hover {
+    color: #48C9B0;
+    cursor: pointer;
+}
+
+.gr-btn-del:hover {
+    color: #E74C3C;
+    cursor: pointer;
+}

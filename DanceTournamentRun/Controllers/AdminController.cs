@@ -111,7 +111,6 @@ namespace DanceTournamentRun.Controllers
             return groupViews;
         }
 
-        //long? tournId, string Name
         [HttpPost]
         public async Task<ActionResult> AddGroup(CreateGroupModel model)
         {
@@ -123,18 +122,61 @@ namespace DanceTournamentRun.Controllers
                 _context.Groups.Add(group);
                 await _context.SaveChangesAsync();
 
-                foreach (var dance in model.Dances)
+                if( model.Dances.Count() != 0)
                 {
-                    Dance newDance = new Dance { Name = dance };
-                    _context.Dances.Add(newDance);
-                    await _context.SaveChangesAsync();
+                    foreach (var dance in model.Dances)
+                    {
+                        Dance newDance = new Dance { Name = dance };
+                        _context.Dances.Add(newDance);
+                        await _context.SaveChangesAsync();
 
-                    GroupsDance groupsDance = new GroupsDance { GroupId = group.Id, DanceId = newDance.Id };
-                    _context.GroupsDances.Add(groupsDance);
+                        GroupsDance groupsDance = new GroupsDance { GroupId = group.Id, DanceId = newDance.Id };
+                        _context.GroupsDances.Add(groupsDance);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                
+                return RedirectToAction("ViewGroups", new { tournId = model.TournamentId });
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeleteGroup(long? groupId)
+        {
+            if (groupId != null)
+            {
+                //delete dances
+                var dancesId = _context.GroupsDances.Where(x => x.GroupId == groupId).Select(p => p.DanceId).ToList();
+
+                if (dancesId.Count() != 0)
+                {
+                    foreach (var danceId in dancesId)
+                    {
+                        var dance = _context.Dances.Find(danceId);
+                        _context.Dances.Remove(dance);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+
+                ////delete group
+                var group = _context.Groups.Find(groupId);
+                var tournId = group.TournamentId;
+                var number = group.Number;
+                _context.Groups.Remove(group);
+                await _context.SaveChangesAsync();
+
+                //change numbers
+                var updateGr = _context.Groups.Where(p => p.TournamentId == tournId && p.Number > number).ToList();
+
+                foreach (var gr in updateGr)
+                {
+                    gr.Number = gr.Number - 1;
                     await _context.SaveChangesAsync();
                 }
 
-                return RedirectToAction("ViewGroups", new { tournId = model.TournamentId });
+                return RedirectToAction("ViewGroups", new { tournId = tournId });
+
             }
             return NotFound();
         }

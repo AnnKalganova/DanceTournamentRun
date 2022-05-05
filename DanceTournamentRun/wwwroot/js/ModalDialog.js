@@ -1,10 +1,10 @@
 
 
 var groupName = document.getElementById('groupName');
-var cancel = document.getElementById('cancelAddGrp');
+var cancelAddGrp = document.getElementById('cancelAddGrp');
 var close = document.getElementById('closeAddGrp');
 
-cancel.addEventListener('click', function () {
+cancelAddGrp.addEventListener('click', function () {
     groupName.value = "";
 });
 
@@ -22,12 +22,10 @@ $('#submitAddGrp').on('click', function (e) {
             $('#groupsTable').html(data);
         },
         error: function () {
-            message.innerHTML = 'ERROR';
             alert('Error');
         }
 
     });
-    console.log($('#addGrForm').serialize());
 });
 
 
@@ -56,4 +54,36 @@ $(document).on('click', '.btn-remove', function (event) {
     $.each(inputs, function (index, item) {
         item.name = 'Dances[' + index + ']';
     });
+});
+
+
+var cancelDelGrp = document.getElementById('cancelDelGrp');
+
+cancelDelGrp.addEventListener('click', function () {
+    $("#delGrName").text("");
+    $("#delGrId").val("");
+});
+
+$('#dialogDeleteGroup').on('show.bs.modal', function (event) {
+    var reference_tag = $(event.relatedTarget);
+    var id = reference_tag.data('id')
+    var name = reference_tag.data('name');
+    $("#delGrId").val(id);
+    $("#delGrName").text(name);
+})
+
+$('#submitDelGrp').on('click', function (e) {
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: "/Admin/DeleteGroup",
+        data: $('#delGrForm').serialize(),
+        success: function (data) {
+            $('#groupsTable').html(data);
+        },
+        error: function () {
+            alert('Error');
+        }
+    });
+    $(".modal-backdrop").remove();
 });

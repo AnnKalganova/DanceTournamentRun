@@ -17,16 +17,26 @@
             @foreach (var item in groups)
             {
                 <tr>
-                    <td>@item.Number</td>
+                    <td >@item.Number</td>
                     <td>@item.Name</td>
                     <td>@{ var dances = "";}
-                    @foreach (var dance in item.Dances)
-                    {
-                        dances += dance.Name + " ";
-                    }
-                    @dances
+                        @if (item.Dances.Count() != 0) {
+                            for (int i = 0; i < item.Dances.Count() - 1; i++)
+                            {
+                                dances += item.Dances.ElementAt(i).Name + ", ";
+                            }
+                            dances += item.Dances.Last().Name;
+                         }
+                         @dances
                     </td>
-                    <td><a href="/K/Upd?id=Пн">Изменить</a></td>
+                    <td>
+                        <a class="gr-btn gr-btn-edit" data-toggle="modal" data-target="#dialogAddGroup">
+                            <span class="oi oi-pencil" title="Изменить" aria-hidden="true"></span>
+                        </a>
+                        <span id="delGrBtn" class="gr-btn gr-btn-del" data-toggle="modal" data-id="@item.GroupId" data-name="@item.Name" data-target="#dialogDeleteGroup">
+                            <span class="oi oi-trash" title="Удалить" aria-hidden="true"></span>
+                        </span>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -55,7 +65,7 @@
                     <div>
                         <div class="form-group">
                             <label asp-for="Name" class="col-form-label">Название</label>
-                            <input id="groupName" type="text" asp-for="Name" class="form-control" placeholder="Введите название группы" />
+                            <input id="groupName" type="text" asp-for="Name" class="form-control" autocomplete="on" placeholder="Введите название группы" />
                             <span asp-validation-for="Name" />
                         </div>
                         <label class="control-label" for="dances">Танцы:</label>
@@ -65,13 +75,13 @@
                                     <input class="form-control" name="Dances[0]" placeholder="Введите название танца" type="text">
                                     <span class="input-group-btn">
                                         <button class="btn btn-success btn-add" type="button">
-                                            <span class="oi oi-plus" title="icon name" aria-hidden="true"></span>
+                                            <span class="oi oi-plus" title="plus" aria-hidden="true"></span>
                                         </button>
                                     </span>
                                 </div>
                             </div>
                         </div>
-                        <small>Нажмите  <span class="oi oi-plus" title="icon name" aria-hidden="true"></span> чтобы добавить еще один танец :)</small>
+                        <small>Нажмите  <span class="oi oi-plus" title="minus" aria-hidden="true"></span> чтобы добавить еще один танец :)</small>
                     </div>
                 </form>
             </div>
@@ -84,26 +94,22 @@
     </div>
 </div>
 
-
-
-
-@*<form id="ajaxForm" class="form-vertical" role="form" autocomplete="off" method="POST" action="/ajaxRequest/">
-    <fieldset>
-        
-        <div class="col-xs-12">
-           
-        </div>
-        <div class="pull-right">
-            <br>
-            <div class="btn-group col-xs-12">
-                <button type="button" class="btn btn-primary" id="sendSerialized">Serialized form</button>
-
-                <button type="button" class="btn btn-default" id="sendQueryString">Query string</button>
-                <button type="button" class="btn btn-warning" id="sendPlainJSon">Plain json</button>
-                <button type="button" class="btn btn-success" id="sendTreeJSon">Tree json</button>
+<div class="modal fade" id="dialogDeleteGroup" tabindex="-1" role="dialog" aria-labelledby="dialogDeleteGroupCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+            
+            <div class="modal-body">
+                <form id="delGrForm" asp-anti-forgery="true">
+                    <input id="delGrId" type="hidden" name="groupId" value="">
+                    <label class="col-form-label"> Вы уверены, что хотите удалить группу <strong><span id="delGrName"> </span></strong>?</label>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelDelGrp" type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button id="submitDelGrp" type="submit" form="delGrForm" class="btn btn-primary" data-dismiss="modal" >Удалить</button>
             </div>
         </div>
-    </fieldset>
-</form>*@
+     </div>
+</div>
 
-<script src="~/js/ModalDialog.js" asp-append-version="true"></script>
+    <script src="~/js/ModalDialog.js" asp-append-version="true"></script>
