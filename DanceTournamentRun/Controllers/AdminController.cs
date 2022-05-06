@@ -96,11 +96,8 @@ namespace DanceTournamentRun.Controllers
             ICollection<GroupViewModal> groupViews = new List<GroupViewModal>();
             foreach (var group in groups)
             {
-                GroupViewModal groupView = new GroupViewModal() ;
-                groupView.GroupId = group.Id;
-                groupView.Name = group.Name;
-                groupView.Number = group.Number;
-
+                GroupViewModal groupView = new GroupViewModal() { GroupId = group.Id, Name = group.Name, Number = group.Number } ;
+               
                 using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     groupView.Dances = db.GetDances(group.Id);
@@ -140,6 +137,13 @@ namespace DanceTournamentRun.Controllers
             }
             return NotFound();
         }
+
+        [HttpPost]
+        public async Task<ActionResult> EditGroup(EditGroupModel editGroup)
+        {
+            return NoContent();
+        }
+
 
         [HttpPost]
         public async Task<ActionResult> DeleteGroup(long? groupId)
