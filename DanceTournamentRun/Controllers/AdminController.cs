@@ -94,7 +94,8 @@ namespace DanceTournamentRun.Controllers
         private ICollection<GroupViewModal> GetGroupViewModels(IQueryable<Group> groups)
         {
             ICollection<GroupViewModal> groupViews = new List<GroupViewModal>();
-            foreach (var group in groups)
+             var sortedGr = groups.OrderBy(gr => gr.Number);
+            foreach (var group in sortedGr)
             {
                 GroupViewModal groupView = new GroupViewModal() { GroupId = group.Id, Name = group.Name, Number = group.Number } ;
                
@@ -141,9 +142,126 @@ namespace DanceTournamentRun.Controllers
         [HttpPost]
         public async Task<ActionResult> EditGroup(EditGroupModel editGroup)
         {
+            if (ModelState.IsValid)
+            {
+                var oldgr = _context.Groups.Find(editGroup.GroupId);
+                oldgr.Name = editGroup.Name != oldgr.Name ? editGroup.Name : oldgr.Name;
+                oldgr.Number = editGroup.Number != oldgr.Number ? GetNewNumber(oldgr, editGroup.Number) : oldgr.Number;
+                await _context.SaveChangesAsync();
+
+                var dancesId = _context.GroupsDances.Where(x => x.GroupId == oldgr.Id).Select(p => p.DanceId).ToList();
+                EditDances(editGroup.Dances, dancesId, oldgr.Id);
+                //var dancesId = _context.GroupsDances.Where(x => x.GroupId == groupId).Select(p => p.DanceId).ToList();
+
+                //if (dancesId.Count() != 0)
+                //{
+                //    foreach (var danceId in dancesId)
+                //    {
+                //        var dance = _context.Dances.Find(danceId);
+                //        _context.Dances.Remove(dance);
+                //        await _context.SaveChangesAsync();
+                //    }
+                //}
+
+                return RedirectToAction("ViewGroups", new { tournId = oldgr.TournamentId });
+            }
             return NoContent();
         }
 
+        private int GetNewNumber(Group oldGr, int editNumber)
+        {
+            var newNumber = 0;
+            var param = 0;
+            if(editNumber > oldGr.Number)
+            {
+                var numbers = _context.Groups.Where(g => g.TournamentId == oldGr.TournamentId).Select(x => x.Number);
+                var maxNum = numbers.Max();
+                newNumber = editNumber > maxNum ? maxNum : editNumber;
+                param = 1;
+                EditNumbers(oldGr.Number + 1, newNumber, oldGr.TournamentId, param);
+            }
+            else
+            {
+                newNumber = editNumber;
+                param = 2;
+                EditNumbers(newNumber, oldGr.Number - 1, oldGr.TournamentId,param);
+            }
+            return newNumber;
+        }
+
+        private async void EditNumbers(int fromNum, int toNum, long tournId, int param)
+        {
+            using (ApplicationDbContext db = new ApplicationDbContext())
+            {
+                var groups = db.Groups.Where(p => p.TournamentId == tournId && (p.Number >= fromNum && p.Number <= toNum)).ToList();
+                switch (param)
+                {
+                    case 1:
+                        foreach (var gr in groups)
+                        {
+                            gr.Number = gr.Number - 1;
+                            await db.SaveChangesAsync();
+                        }
+                        break;
+                    case 2:
+                        foreach (var gr in groups)
+                        {
+                            gr.Number = gr.Number + 1;
+                            await db.SaveChangesAsync();
+                        }
+                        break;
+                }
+            }
+        }
+
+        private void EditDances(string[] newDances,List<long> dancesId, long grId)
+        {
+            if(newDances.Length > dancesId.Count())
+            {
+                using (ApplicationDbContext db = new ApplicationDbContext())
+                {
+                    var i = 0;
+                    foreach (var id in dancesId)
+                    {
+                        var dance = db.Dances.Find(id);
+                        dance.Name = newDances[i] != dance.Name ? newDances[i] : dance.Name;
+                        db.SaveChangesAsync();
+                        i++;
+                    }
+                    for (var k = i; k < newDances.Length; k++)
+                    {
+                        Dance addDance = new Dance { Name = newDances[k] };
+                        db.Dances.Add(addDance);
+                        db.SaveChangesAsync();
+
+                        GroupsDance groupsDance = new GroupsDance { GroupId = grId, DanceId = addDance.Id };
+                        db.GroupsDances.Add(groupsDance);
+                        db.SaveChangesAsync();
+                    }
+                }
+            }
+            else
+            {
+                using (ApplicationDbContext db = new ApplicationDbContext())
+                {
+                    var i = 0;
+                    foreach (var dName in newDances)
+                    {
+                        var dance = db.Dances.Find(dancesId[i]);
+                        dance.Name = dName != dance.Name ? dName : dance.Name;
+                        db.SaveChangesAsync();
+                        i++;
+                    }
+                    for (var k = i; k < dancesId.Count(); k++)
+                    {
+                        var delDance = db.Dances.Find(dancesId[k]);
+                        db.Dances.Remove(delDance);
+                        db.SaveChangesAsync();
+                    }
+                }
+                   
+            }
+        }
 
         [HttpPost]
         public async Task<ActionResult> DeleteGroup(long? groupId)
