@@ -1,0 +1,110 @@
+﻿@model DanceTournamentRun.Models.CreatePairModel
+@{
+    long tournId = ViewBag.tournamentId;
+    List<Group> groups = ViewBag.pairGroups;
+    Dictionary<long, List<Pair>> pairs = ViewBag.pairs;
+    List<Pair> pairsFromDict = new List<Pair>();
+}
+@using Newtonsoft.Json
+
+<div class="d-flex">
+    <table class="table  table-striped col-md-8">
+        @* table-borderless *@
+        <thead class="table-borderless">
+            <tr>
+                <th scope="col">Группа</th>
+                <th scope="col">Партнер</th>
+                <th scope="col">Партнерша</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < groups.Count(); i++)
+            {
+                <tr class="clickable table-primary" data-toggle="collapse" id="groupRow-@i" data-target=".groupRow-@i">
+                    <td><span class="oi oi-plus" title="plus" aria-hidden="true"></span> @groups.ElementAt(i).Name</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                @if (pairs.TryGetValue(groups[i].Id, out pairsFromDict))
+                {
+                    @foreach (var pair in pairsFromDict)
+                    {
+                        <tr class="collapse groupRow-@i">
+                            <td></td>
+                            <td>@pair.Partner1LastName @pair.Partner1FirstName</td>
+                            <td>@pair.Partner2LastName @pair.Partner2FirstName</td>
+                            <td>
+                                <span class="gr-btn gr-btn-edit" data-toggle="modal" data-target="#dialogEditGroup"
+                                      data-id="@pair.GroupId">
+                                    <span class="oi oi-pencil" title="Изменить" aria-hidden="true"></span>
+                                </span>
+                                <span id="delGrBtn" class="gr-btn gr-btn-del" data-toggle="modal" data-target="#dialogDeleteGroup"
+                                      data-id="@pair.Id">
+                                    <span class="oi oi-trash" title="Удалить" aria-hidden="true"></span>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                }
+
+            }
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-info  h-25 .col-md-3" data-toggle="modal" data-target="#dialogAddPair" data-groups=@JsonConvert.SerializeObject(@groups[0])>
+        Добавить пару
+    </button>
+</div>
+
+
+<div class="modal fade" id="dialogAddPair" tabindex="-1" role="dialog" aria-labelledby="dialogAddPairCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dialogAddPairCenterTitle">Добавление пары</h5>
+                <button id="closeAddPair" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form id="addPairForm" asp-anti-forgery="true">
+                    <div class="validation" asp-validation-summary="ModelOnly"></div>
+                    <div>
+                        <div class="form-group">
+                            <label asp-for="GroupId">Группа</label>
+                            <select class="form-control" id="groupSelect" asp-for="GroupId">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Partner1LastName" class="col-form-label">Партнер</label>
+                            <input id="prtn1LastName" type="text" asp-for="Partner1LastName" class="form-control" autocomplete="on" placeholder="Введите фамилию" />
+                            <span asp-validation-for="Partner1LastName" />
+                            <br />
+                            <input id="prtn1FirstName" type="text" asp-for="Partner1FirstName" class="form-control" autocomplete="on" placeholder="Введите имя" />
+                            <span asp-validation-for="Partner1FirstName" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Partner1LastName" class="col-form-label">Партнерша</label>
+                            <input id="prtn2LastName" type="text" asp-for="Partner2LastName" class="form-control" autocomplete="on" placeholder="Введите фамилию" />
+                            <span asp-validation-for="Partner2LastName" />
+                            <br />
+                            <input id="prtn2FirstName" type="text" asp-for="Partner2FirstName" class="form-control" autocomplete="on" placeholder="Введите имя" />
+                            <span asp-validation-for="Partner2FirstName" />
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelAddPair" type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button id="submitAddPair" type="submit" form="addPairForm" class="btn btn-primary" data-dismiss="modal">Сохранить</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="~/js/SetPair.js" asp-append-version="true"></script>

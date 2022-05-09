@@ -96,7 +96,6 @@ $("#dialogEditGroup").on('show.bs.modal', function (e) {
     var dances = e.relatedTarget.dataset.dances;
 
     var dancesObj = JSON.parse(dances);
-    console.log(dancesObj)
     //populate the controls with values        
     $(e.currentTarget).find('input[name="GroupId"]').val(grId);
     $(e.currentTarget).find('input[name="Name"]').val(grName);
@@ -137,7 +136,7 @@ $("#dialogEditGroup").on('hidden.bs.modal', function (e) {
 
 $('#submitEditGrp').on('click', function (e) {
     e.preventDefault();
-    console.log($('#editGrForm').serialize());
+    //console.log($('#editGrForm').serialize());
 
     $.ajax({
         type: "POST",

@@ -44,13 +44,6 @@ namespace DanceTournamentRun.Controllers
 
             ViewBag.TournName = tournament.Name;
             return View("SetupTournament",tournament);
-
-
-            //if (TempData["RefLastname"] != null)
-            //{
-            //    ViewBag.RefLastname = TempData["RefLastname"];
-            //}
-
         }
 
         [HttpGet]
@@ -78,7 +71,6 @@ namespace DanceTournamentRun.Controllers
         
         public PartialViewResult ViewGroups(long? tournId)
         {
-            //TODO: заменить на обращение к запросам внутри бд
             if(tournId != null)
             {
                 var groups = _context.Groups.Where(p => p.TournamentId == tournId);
@@ -151,17 +143,6 @@ namespace DanceTournamentRun.Controllers
 
                 var dancesId = _context.GroupsDances.Where(x => x.GroupId == oldgr.Id).Select(p => p.DanceId).ToList();
                 EditDances(editGroup.Dances, dancesId, oldgr.Id);
-                //var dancesId = _context.GroupsDances.Where(x => x.GroupId == groupId).Select(p => p.DanceId).ToList();
-
-                //if (dancesId.Count() != 0)
-                //{
-                //    foreach (var danceId in dancesId)
-                //    {
-                //        var dance = _context.Dances.Find(danceId);
-                //        _context.Dances.Remove(dance);
-                //        await _context.SaveChangesAsync();
-                //    }
-                //}
 
                 return RedirectToAction("ViewGroups", new { tournId = oldgr.TournamentId });
             }
@@ -303,6 +284,67 @@ namespace DanceTournamentRun.Controllers
             return NotFound();
         }
 
+        public PartialViewResult ViewPairs(long? tournId)
+        {
+            if (tournId != null)
+            {
+                var pairGroups = _context.Groups.Where(p => p.TournamentId == tournId).ToList();
+                List<Pair> pairs;
+                using (ApplicationDbContext db = new ApplicationDbContext())
+                {
+                    pairs = db.GetPairsByTourn((long)tournId);
+                }
+
+                Dictionary<long, List<Pair>> pairsInGr = new Dictionary<long, List<Pair>>();
+
+                if(pairs.Count() != 0)
+                {
+                    var lastGrId = pairs.First().GroupId;
+                    List<Pair> parsForDict = new List<Pair>();
+                    foreach (var pair in pairs)
+                    {
+                        var currGrId = pair.GroupId;
+                        if (currGrId == lastGrId)
+                        {
+                            parsForDict.Add(pair);
+                        }
+                        else
+                        {
+                            pairsInGr.Add(lastGrId, parsForDict);
+                            lastGrId = currGrId;
+                            parsForDict.Clear();
+                            parsForDict.Add(pair);
+                        }
+                    }
+                    pairsInGr.Add(lastGrId, parsForDict);
+                }
+
+                ViewBag.tournamentId = tournId;
+                ViewBag.pairGroups = pairGroups;
+                ViewBag.pairs = pairsInGr;
+                return PartialView("Pairs");
+            }
+            //TODO: исправить на вывод ошибки
+            return PartialView("Error");
+        }
+
+        private ICollection<GroupViewModal> GetPairViewModels(IQueryable<Group> groups)
+        {
+            ICollection<GroupViewModal> groupViews = new List<GroupViewModal>();
+            var sortedGr = groups.OrderBy(gr => gr.Number);
+            foreach (var group in sortedGr)
+            {
+                GroupViewModal groupView = new GroupViewModal() { GroupId = group.Id, Name = group.Name, Number = group.Number };
+
+                using (ApplicationDbContext db = new ApplicationDbContext())
+                {
+                    groupView.Dances = db.GetDances(group.Id);
+                }
+                groupViews.Add(groupView);
+                //TODO: отсортировать по Number
+            }
+            return groupViews;
+        }
         public ActionResult GetRegLinks()
         {
             string message = null;

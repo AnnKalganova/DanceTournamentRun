@@ -17,5 +17,19 @@ var viewGroups = function (tournId) {
     });
 };
 
+var viewPairs = function (tournId) {
+    $.ajax({
+        url: "/Admin/ViewPairs",
+        data: { "tournId": tournId },
+        type: "GET",
+        success: function (data) {
+            $('#pairsTable').html(data);
+        },
+        error: function () {
+            $("#pairsTable").html("ERROR");
+        }
+    });
+};
+
 
 

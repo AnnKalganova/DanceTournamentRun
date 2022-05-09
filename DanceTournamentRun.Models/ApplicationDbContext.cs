@@ -43,10 +43,16 @@ namespace DanceTournamentRun.Models
         public ICollection<Dance> GetDances(long groupId)
         {
             SqlParameter param = new SqlParameter("@groupId", groupId);
-            var dances = Dances.FromSqlRaw("EXEC GetDances @groupId", param).ToList();
+            var dances = Dances.FromSqlRaw("EXEC GetDancesByGroupId @groupId", param).ToList();
             return dances;
         }
 
+        public List<Pair> GetPairsByTourn(long tournId)
+        {
+            SqlParameter param = new SqlParameter("@tournId", tournId);
+            var pairs = Pairs.FromSqlRaw("EXEC GetPairsByTournId @tournId", param).ToList();
+            return pairs;
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
