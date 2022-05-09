@@ -32,6 +32,7 @@ namespace DanceTournamentRun.Models
         public virtual DbSet<Tournament> Tournaments { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UsersGroup> UsersGroups { get; set; }
+        public virtual DbSet<UsersTournament> UsersTournaments { get; set; }
 
         public ICollection<Group> GetGroups(long tournId)
         {
@@ -171,7 +172,7 @@ namespace DanceTournamentRun.Models
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.Property(e => e.Email).IsRequired();
+                entity.Property(e => e.Login).IsRequired();
 
                 entity.Property(e => e.Password)
                     .IsRequired()
@@ -198,6 +199,18 @@ namespace DanceTournamentRun.Models
                     .HasConstraintName("FK_dbo.UsersGroups_dbo.Users_UserId");
             });
 
+            modelBuilder.Entity<UsersTournament>(entity =>
+            {
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UsersTournaments)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_dbo.UsersTournaments_dbo.Users_UserId");
+
+                entity.HasOne(d => d.Tournament)
+                    .WithMany(p => p.UsersTournaments)
+                    .HasForeignKey(d => d.TournamentId)
+                    .HasConstraintName("[FK_dbo.UsersTournaments_dbo.Tournaments_TournamentId]");
+            });
             OnModelCreatingPartial(modelBuilder);
         }
 

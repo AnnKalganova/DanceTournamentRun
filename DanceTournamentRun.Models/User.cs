@@ -12,16 +12,18 @@ namespace DanceTournamentRun.Models
             Points = new HashSet<Point>();
             Tournaments = new HashSet<Tournament>();
             UsersGroups = new HashSet<UsersGroup>();
+            UsersTournaments = new HashSet<UsersTournament>();
         }
-
         public long Id { get; set; }
-        public string Email { get; set; }
+        public string Login { get; set; }
         public string Password { get; set; }
         public long RoleId { get; set; }
-
+        public string LastName { get; set; }
+        public string FirstName { get; set; }
         public virtual Role Role { get; set; }
         public virtual ICollection<Point> Points { get; set; }
         public virtual ICollection<Tournament> Tournaments { get; set; }
         public virtual ICollection<UsersGroup> UsersGroups { get; set; }
+        public virtual ICollection<UsersTournament> UsersTournaments { get; set; }
     }
 }

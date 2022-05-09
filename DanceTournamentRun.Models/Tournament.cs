@@ -10,6 +10,7 @@ namespace DanceTournamentRun.Models
         public Tournament()
         {
             Groups = new HashSet<Group>();
+            UsersTournaments = new HashSet<UsersTournament>();
         }
 
         public long Id { get; set; }
@@ -19,5 +20,6 @@ namespace DanceTournamentRun.Models
 
         public virtual User User { get; set; }
         public virtual ICollection<Group> Groups { get; set; }
+        public virtual ICollection<UsersTournament> UsersTournaments { get; set; }
     }
 }

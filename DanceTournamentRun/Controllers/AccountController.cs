@@ -29,11 +29,11 @@ namespace DanceTournamentRun.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
+                User user = await _context.Users.FirstOrDefaultAsync(u => u.Login == model.Login);
                 if (user == null)
                 {
                     // добавляем пользователя в бд
-                    user = new User { Email = model.Email, Password = model.Password };
+                    user = new User { Login = model.Login, Password = model.Password };
                     Role userRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "admin");
                     if (userRole != null)
                         user.Role = userRole;
@@ -63,7 +63,7 @@ namespace DanceTournamentRun.Controllers
             {
                 User user = await _context.Users
                     .Include(u => u.Role)
-                    .FirstOrDefaultAsync(u => u.Email == model.Email && u.Password == model.Password);
+                    .FirstOrDefaultAsync(u => u.Login == model.Login && u.Password == model.Password);
                 if (user != null)
                 {
                     await Authenticate(user); // аутентификация
@@ -87,7 +87,7 @@ namespace DanceTournamentRun.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Name, user.Login),
                 new Claim(ClaimTypes.Role, user.Role?.Name)
             };
             // создаем объект ClaimsIdentity

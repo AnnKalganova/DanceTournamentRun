@@ -9,7 +9,7 @@
     <ul class="nav nav-tabs col-md-5">
         <li class="nav-item"><a onclick="viewGroups(@Model.Id)" class="nav-link" data-toggle="tab" href="#groups">Группы</a></li>
         <li class="nav-item"><a onclick="viewPairs(@Model.Id)" class="nav-link" data-toggle="tab" href="#pairs">Пары</a></li>
-        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#referees">Судьи</a></li>
+        <li class="nav-item"><a onclick="viewReferees(@Model.Id)" class="nav-link" data-toggle="tab" href="#referees">Судьи</a></li>
         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#registrators">Организаторы</a></li>
     </ul>
 
@@ -26,7 +26,9 @@
             </div>
         </div>
         <div id="referees" class="tab-pane">
-            Здесь будут судьи
+            <div id="refereesTable">
+
+            </div>
         </div>
         <div id="registrators" class="tab-pane">
             Здесь будут организаторы

@@ -328,6 +328,16 @@ namespace DanceTournamentRun.Controllers
             return PartialView("Error");
         }
 
+
+        public PartialViewResult ViewReferees(long? tournId)
+        {
+            if (tournId != null)
+            {
+
+                return PartialView("Referees");
+            }
+            return PartialView("Error");
+        }
         private ICollection<GroupViewModal> GetPairViewModels(IQueryable<Group> groups)
         {
             ICollection<GroupViewModal> groupViews = new List<GroupViewModal>();
