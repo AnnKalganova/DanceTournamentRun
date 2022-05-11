@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Text.Json;
 using QRCoder;
 using System;
 using System.Collections.Generic;
@@ -271,15 +271,12 @@ namespace DanceTournamentRun.Controllers
 
                 //change numbers
                 var updateGr = _context.Groups.Where(p => p.TournamentId == tournId && p.Number > number).ToList();
-
                 foreach (var gr in updateGr)
                 {
                     gr.Number = gr.Number - 1;
                     await _context.SaveChangesAsync();
                 }
-
                 return RedirectToAction("ViewGroups", new { tournId = tournId });
-
             }
             return NotFound();
         }
@@ -294,9 +291,7 @@ namespace DanceTournamentRun.Controllers
                 {
                     pairs = db.GetPairsByTourn((long)tournId);
                 }
-
                 Dictionary<long, List<Pair>> pairsInGr = new Dictionary<long, List<Pair>>();
-
                 if(pairs.Count() != 0)
                 {
                     var lastGrId = pairs.First().GroupId;
@@ -310,7 +305,7 @@ namespace DanceTournamentRun.Controllers
                         }
                         else
                         {
-                            pairsInGr.Add(lastGrId, parsForDict);
+                            pairsInGr.Add(lastGrId, new List<Pair>(parsForDict));
                             lastGrId = currGrId;
                             parsForDict.Clear();
                             parsForDict.Add(pair);
@@ -318,7 +313,6 @@ namespace DanceTournamentRun.Controllers
                     }
                     pairsInGr.Add(lastGrId, parsForDict);
                 }
-
                 ViewBag.tournamentId = tournId;
                 ViewBag.pairGroups = pairGroups;
                 ViewBag.pairs = pairsInGr;
@@ -328,64 +322,139 @@ namespace DanceTournamentRun.Controllers
             return PartialView("Error");
         }
 
-
+        [HttpPost]
+        public async Task<ActionResult> AddPair(CreatePairModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                //TODO проверка что такая уже есть в группе
+                Pair newPair = new Pair()
+                {
+                    GroupId = model.GroupId,
+                    Partner1LastName = model.Partner1LastName,
+                    Partner1FirstName = model.Partner1FirstName,
+                    Partner2LastName = model.Partner2LastName,
+                    Partner2FirstName = model.Partner2FirstName
+                };
+                _context.Pairs.Add(newPair);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("ViewPairs", new { tournId = model.TournamentId});
+            }
+            return NotFound();
+        }
         public PartialViewResult ViewReferees(long? tournId)
         {
             if (tournId != null)
             {
-
+                var groups = _context.Groups.Where(p => p.TournamentId == tournId).ToList();
+                List<User> referees = new List<User>();
+                using (ApplicationDbContext db = new ApplicationDbContext())
+                {
+                    referees = db.GetRefereesByTourn((long)tournId);
+                }
+                List<RefereeViewModel> refereeViews = new List<RefereeViewModel>();
+                foreach (var referee in referees)
+                {
+                    var refGroupsId = _context.UsersGroups.Where(r => r.UserId == referee.Id).Select(p=>p.GroupId).ToArray();
+                    RefereeViewModel viewModel = new RefereeViewModel() { Id = referee.Id, LastName = referee.LastName, FirstName = referee.FirstName, GroupsId = refGroupsId };
+                    refereeViews.Add(viewModel);
+                }
+                ViewBag.tournamentId = tournId;
+                ViewBag.refGroups = groups;
+                ViewBag.referees = refereeViews;
                 return PartialView("Referees");
             }
             return PartialView("Error");
         }
-        private ICollection<GroupViewModal> GetPairViewModels(IQueryable<Group> groups)
-        {
-            ICollection<GroupViewModal> groupViews = new List<GroupViewModal>();
-            var sortedGr = groups.OrderBy(gr => gr.Number);
-            foreach (var group in sortedGr)
-            {
-                GroupViewModal groupView = new GroupViewModal() { GroupId = group.Id, Name = group.Name, Number = group.Number };
 
+        [HttpPost]
+        public async Task<ActionResult> AddReferee(CreateRefereeModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var roleId = _context.Roles.Where(r => r.Name == "referee").Select(d => d.Id).FirstOrDefault();
+                User referee = new User() {
+                    LastName = model.LastName, 
+                    FirstName = model.FirstName,
+                    Login = model.Login, 
+                    Password = "1234",
+                    RoleId = roleId
+                };
+                _context.Users.Add(referee);
+                await _context.SaveChangesAsync();
+
+                UsersTournament usersTournament = new UsersTournament() { TournamentId = model.TournamentId, UserId = referee.Id };
+                _context.UsersTournaments.Add(usersTournament);
+                await _context.SaveChangesAsync();
+
+                foreach(var grId in model.GroupsId)
+                {
+                    UsersGroup usersGroup = new UsersGroup() { UserId = referee.Id, GroupId = grId };
+                    _context.UsersGroups.Add(usersGroup);
+                    await _context.SaveChangesAsync();
+                }
+                return RedirectToAction("ViewReferees", new { tournId = model.TournamentId });
+
+            }
+            return NotFound();
+        }
+
+        public PartialViewResult ViewRegistrators(long? tournId)
+        {
+            if (tournId != null)
+            {
+                var groups = _context.Groups.Where(p => p.TournamentId == tournId).ToList();
+                List<User> referees = new List<User>();
                 using (ApplicationDbContext db = new ApplicationDbContext())
                 {
-                    groupView.Dances = db.GetDances(group.Id);
+                    referees = db.GetRefereesByTourn((long)tournId);
                 }
-                groupViews.Add(groupView);
-                //TODO: отсортировать по Number
+                List<RefereeViewModel> refereeViews = new List<RefereeViewModel>();
+                foreach (var referee in referees)
+                {
+                    var refGroupsId = _context.UsersGroups.Where(r => r.UserId == referee.Id).Select(p => p.GroupId).ToArray();
+                    RefereeViewModel viewModel = new RefereeViewModel() { Id = referee.Id, LastName = referee.LastName, FirstName = referee.FirstName, GroupsId = refGroupsId };
+                    refereeViews.Add(viewModel);
+                }
+                ViewBag.tournamentId = tournId;
+                ViewBag.refGroups = groups;
+                ViewBag.referees = refereeViews;
+                return PartialView("Registrators");
             }
-            return groupViews;
-        }
-        public ActionResult GetRegLinks()
-        {
-            string message = null;
-            using (HttpClient client = new HttpClient())
-            {
-                var response = client.GetAsync($"{"https://localhost:44362/api/Admin/regLinks" }").Result;
-                message = response.Content.ReadAsStringAsync().Result;
-                var result  = JsonConvert.DeserializeObject<RegLinksViewModel>(message);
-                Console.WriteLine(result);
-                TempData["RegGroupsId"] = result.GroupsId;
-                return Redirect("/Home/Index"); //Asp3
-            }
+            return PartialView("Error");
         }
 
-        public ActionResult GetRefLinks(string lastname)
-        {
-            string message = null;
-            using (HttpClient client = new HttpClient())
-            {
-                var response = client.GetAsync($"{"https://localhost:44362/api/Admin/refLinks?lastname=" + lastname }").Result;
-                message = response.Content.ReadAsStringAsync().Result;
-                var result = JsonConvert.DeserializeObject<RefLinksViewModel>(message);
-                if (result == null)
-                {
-                    return Redirect("/Home/Index");
-                }
-                TempData["RefGroupsId"] = result.groupsId;
-                TempData["RefLastname"] = result.refLastname;
-                return Redirect("/Home/Index"); //Asp3
-            }
-        }
+        //public ActionResult GetRegLinks()
+        //{
+        //    string message = null;
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        var response = client.GetAsync($"{"https://localhost:44362/api/Admin/regLinks" }").Result;
+        //        message = response.Content.ReadAsStringAsync().Result;
+        //        var result  = JsonConvert.DeserializeObject<RegLinksViewModel>(message);
+        //        Console.WriteLine(result);
+        //        TempData["RegGroupsId"] = result.GroupsId;
+        //        return Redirect("/Home/Index"); //Asp3
+        //    }
+        //}
+
+        //public ActionResult GetRefLinks(string lastname)
+        //{
+        //    string message = null;
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        var response = client.GetAsync($"{"https://localhost:44362/api/Admin/refLinks?lastname=" + lastname }").Result;
+        //        message = response.Content.ReadAsStringAsync().Result;
+        //        var result = JsonConvert.DeserializeObject<RefLinksViewModel>(message);
+        //        if (result == null)
+        //        {
+        //            return Redirect("/Home/Index");
+        //        }
+        //        TempData["RefGroupsId"] = result.groupsId;
+        //        TempData["RefLastname"] = result.refLastname;
+        //        return Redirect("/Home/Index"); //Asp3
+        //    }
+        //}
 
         public ActionResult GetQR(string link)
         {

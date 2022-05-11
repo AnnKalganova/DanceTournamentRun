@@ -18,5 +18,7 @@ namespace DanceTournamentRun.Models
         public string Partner2FirstName { get; set; }
         [Required(ErrorMessage = "Не указана фамилия")]
         public string Partner2LastName { get; set; }
+
+        public long TournamentId { get; set; }
     }
 }

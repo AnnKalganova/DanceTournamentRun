@@ -54,6 +54,14 @@ namespace DanceTournamentRun.Models
             var pairs = Pairs.FromSqlRaw("EXEC GetPairsByTournId @tournId", param).ToList();
             return pairs;
         }
+
+        public List<User> GetRefereesByTourn(long tournId)
+        {
+            SqlParameter param = new SqlParameter("@tournId", tournId);
+            var referees = Users.FromSqlRaw("EXEC GetRefereesByTournId @tournId", param).ToList();
+            return referees;
+        }
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

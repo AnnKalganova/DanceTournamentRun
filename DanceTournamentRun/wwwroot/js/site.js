@@ -33,14 +33,14 @@ var viewPairs = function (tournId) {
 
 var viewReferees = function (tournId) {
     $.ajax({
-        url: "/Admin/ViewPairs",
+        url: "/Admin/ViewReferees",
         data: { "tournId": tournId },
         type: "GET",
         success: function (data) {
-            $('#pairsTable').html(data);
+            $('#refereesTable').html(data);
         },
         error: function () {
-            $("#pairsTable").html("ERROR");
+            $("#refereesTable").html("ERROR");
         }
     });
 };

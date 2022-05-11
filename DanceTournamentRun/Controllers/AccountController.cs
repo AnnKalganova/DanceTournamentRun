@@ -33,7 +33,7 @@ namespace DanceTournamentRun.Controllers
                 if (user == null)
                 {
                     // добавляем пользователя в бд
-                    user = new User { Login = model.Login, Password = model.Password };
+                    user = new User { Login = model.Login, LastName = model.LastName, FirstName = model.FirstName ,Password = model.Password };
                     Role userRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "admin");
                     if (userRole != null)
                         user.Role = userRole;

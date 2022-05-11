@@ -10,6 +10,11 @@ namespace DanceTournamentRun.Models
     {
         [Required(ErrorMessage = "Не указан логин")]
         public string Login { get; set; }
+        [Required(ErrorMessage = "Не указана фамилия")]
+        public string LastName { get; set; }
+
+        [Required(ErrorMessage = "Не указано имя")]
+        public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Не указан пароль")]
         [DataType(DataType.Password)]

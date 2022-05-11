@@ -15,6 +15,16 @@
             <span asp-validation-for="Login" />
         </div>
         <div>
+            <label asp-for="LastName">Введите фамилию</label><br />
+            <input type="text" asp-for="LastName" />
+            <span asp-validation-for="LastName" />
+        </div>
+        <div>
+            <label asp-for="FirstName">Введите имя</label><br />
+            <input type="text" asp-for="FirstName" />
+            <span asp-validation-for="FirstName" />
+        </div>
+        <div>
             <label asp-for="Password">Введите пароль</label><br />
             <input asp-for="Password" />
             <span asp-validation-for="Password" />

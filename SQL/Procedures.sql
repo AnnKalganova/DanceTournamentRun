@@ -1,4 +1,5 @@
-
+use [DanceTournamentRun]
+go
 CREATE PROCEDURE GetDancesByGroupId
 	@groupId bigint
 	AS
@@ -32,14 +33,21 @@ EXEC GetPairsByTournId 1;
 Drop PROCEDURE GetPairsByTournId;
 go
 
+
+--Version 2.0 
 CREATE PROCEDURE GetRefereesByTournId
 	@tournId bigint
 	AS
 BEGIN
-	SELECT usr.Id, usr.Email, usr.Password, usr.RoleId
+	SELECT usr.Id, usr.Login, usr.Password, usr.LastName, usr.FirstName, usr.RoleId
 	FROM Users as usr
 	JOIN Roles as rl ON rl.Id = usr.RoleId
-	JOIN Tournaments as tr ON tr.UserId = usr.Id
-	Where tr.Id = @tournId
+	JOIN UsersTournaments as tr ON tr.UserId = usr.Id
+	Where tr.TournamentId = @tournId and rl.Name = 'referee';
 END;
+go
+
+EXEC GetRefereesByTournId 10004;
+
+Drop PROCEDURE GetRefereesByTournId;
 go
