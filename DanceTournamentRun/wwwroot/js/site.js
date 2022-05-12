@@ -61,7 +61,6 @@ var viewRegistrators = function (tournId) {
 
 $('#runTournament').click(function () {
     var buttonData = $(this).attr('data');
-    console.log(buttonData);
     $.ajax({
         type: "GET",
         url: "/Admin/RunTourn",
@@ -76,4 +75,6 @@ $('#runTournament').click(function () {
 
     });
 });
+
+
 

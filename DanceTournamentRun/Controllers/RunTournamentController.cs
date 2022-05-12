@@ -1,8 +1,12 @@
 ﻿using DanceTournamentRun.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using QRCoder;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -41,7 +45,7 @@ namespace DanceTournamentRun.Controllers
                 var tourn = _context.Tournaments.Find(tournId);
                 if (!(bool)tourn.IsFirstStepOver)
                 {
-                    return RedirectToAction("GetFirstView");
+                    return RedirectToAction("GetFirstView", tourn);
                 }
                 else if (!(bool)tourn.IsSecondStepOver)
                 {
@@ -58,9 +62,9 @@ namespace DanceTournamentRun.Controllers
 
         public PartialViewResult GetFirstView(Tournament tournament)
         {
-            if(tournament != null)
+            if(tournament !=null)
             {
-                return PartialView("FirstStep");
+                return PartialView("FirstStep", tournament);
             }
             return PartialView("Error");
         }
@@ -82,6 +86,76 @@ namespace DanceTournamentRun.Controllers
             }
             return PartialView("Error");
         }
+
+        public async Task<ActionResult> GetRegQR(long? tournId)
+        {
+            if(tournId != null)
+            {
+                //сформировать qr +вывести
+                List<User> registrators = new List<User>();
+                using (ApplicationDbContext db = new ApplicationDbContext())
+                {
+                    registrators = db.GetRegistratorsByTournId((long)tournId);
+                }
+
+                List<RegViewModel> regViews = new List<RegViewModel>();
+                foreach (var reg in registrators)
+                {
+                    QRRegData data = new QRRegData() { Login = reg.Login, LastName = reg.LastName, Firstname = reg.FirstName };
+                    var link = JsonConvert.SerializeObject(data);
+                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(link, QRCodeGenerator.ECCLevel.Q);
+                    QRCode qrCode = new QRCode(qrCodeData);
+                    Bitmap qrCodeImage = qrCode.GetGraphic(20);
+
+                    RegViewModel regView = new RegViewModel() { LastName = reg.LastName, Firstname = reg.FirstName, QR = BitmapToBytesCode(qrCodeImage) };
+                    regViews.Add(regView);
+                }
+                ViewBag.regViews = regViews;
+                return View("RegQRs");
+                // строка прогресса регистрации ViewComponent??
+            }
+            return View("Error");
+        }
+
+        public async Task<ActionResult> GetRefereeQR(long? tournId)
+        {
+            if (tournId != null)
+            {
+                List<User> referees = new List<User>();
+                using (ApplicationDbContext db = new ApplicationDbContext())
+                {
+                    referees = db.GetRefereesByTourn((long)tournId);
+                }
+
+                List<RegViewModel> refViews = new List<RegViewModel>();
+                foreach (var referee in referees)
+                {
+                    QRRegData data = new QRRegData() { Login = referee.Login, LastName = referee.LastName, Firstname = referee.FirstName };
+                    var link = JsonConvert.SerializeObject(data);
+                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(link, QRCodeGenerator.ECCLevel.Q);
+                    QRCode qrCode = new QRCode(qrCodeData);
+                    Bitmap qrCodeImage = qrCode.GetGraphic(20);
+
+                    RegViewModel refView = new RegViewModel() { LastName = referee.LastName, Firstname = referee.FirstName, QR = BitmapToBytesCode(qrCodeImage) };
+                    refViews.Add(refView);
+                }
+                ViewBag.regViews = refViews;
+                return View("RefereeQRs");
+            }
+            return View("Error");
+        }
+
+        private static Byte[] BitmapToBytesCode(Bitmap image)
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                image.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                return stream.ToArray();
+            }
+        }
+
     }
 }
 

@@ -440,11 +440,28 @@ namespace DanceTournamentRun.Controllers
 
         public async Task<ActionResult> RunTourn(long? tournId)
         {
-            if(tournId != null)
+            if(tournId.HasValue)
             {
                 var tourn = _context.Tournaments.Find(tournId);
                 tourn.IsTournamentRun = true;
                 await _context.SaveChangesAsync();
+
+                List<User> registrators = new List<User>();
+                using (ApplicationDbContext db = new ApplicationDbContext())
+                {
+                    registrators = db.GetRegistratorsByTournId((long)tournId);
+                }
+
+                var groups = _context.Groups.Where(p => p.TournamentId == tournId).ToList();
+                var regCount = registrators.Count();
+                for (var i = 0; i < groups.Count(); i++)
+                {
+                    var regID = registrators[i % regCount].Id;
+                    var grId = groups[i].Id;
+                    UsersGroup usGr = new UsersGroup() { UserId = regID, GroupId = grId };
+                    _context.UsersGroups.Add(usGr);
+                    await _context.SaveChangesAsync();
+                }
                 return RedirectToAction("Index", "RunTournament");
             }
             return NotFound();

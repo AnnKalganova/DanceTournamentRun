@@ -1,0 +1,59 @@
+﻿@{
+    Layout = null;
+}
+@{
+    List<RegViewModel> referees = ViewBag.regViews;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>QR-Codes</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body >
+    <h4 class="m-4">Нажмите ctr + P для печати</h4>
+    <table class="table table-borderless">
+        <tbody>
+            @{var count = referees.Count();}
+            @for (var i = 0; i < count; i += 4)
+            {
+                <tr>
+                    @if (i < count)
+                    {
+                        <td class="text-center w-25">
+                            <h4>@referees[i].LastName @referees[i].Firstname</h4>
+                            <img src="@String.Format("data:image/png;base64,{0}",Convert.ToBase64String(referees[i].QR))" height="200" width="200" />
+                        </td>
+                    }
+                    @if ((i + 1) < count)
+                    {
+                        <td class="text-center w-25">
+                            <h4>@referees[i + 1].LastName @referees[i].Firstname</h4>
+                            <img src="@String.Format("data:image/png;base64,{0}",Convert.ToBase64String(referees[i+1].QR))" height="200" width="200" />
+                        </td>
+                    }
+                    @if ((i + 2) < count)
+                    {
+                        <td class="text-center w-25">
+                            <h4>@referees[i + 2].LastName @referees[i].Firstname</h4>
+                            <img src="@String.Format("data:image/png;base64,{0}",Convert.ToBase64String(referees[i+2].QR))" height="200" width="200" />
+                        </td>
+                    }
+                    @if ((i + 3) < count)
+                    {
+                        <td class="text-center w-25">
+                            <h4>@referees[i + 3].LastName @referees[i].Firstname</h4>
+                            <img src="@String.Format("data:image/png;base64,{0}",Convert.ToBase64String(referees[i+3].QR))" height="200" width="200" />
+                        </td>
+                    }
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>

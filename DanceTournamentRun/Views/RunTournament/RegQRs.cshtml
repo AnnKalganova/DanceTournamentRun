@@ -1,0 +1,60 @@
+﻿
+@{
+    Layout = null;
+}
+@{
+    List<RegViewModel> registrators = ViewBag.regViews;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>QR-Codes</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body class="mb-3">
+    <h4>Нажмите ctr + P для печати</h4>
+     <table class="table table-borderless">
+         <tbody>
+             @{var count = registrators.Count();}   
+             @for (var i = 0; i < count; i+=4)
+              {
+                  <tr>
+                      @if (i < count)
+                      {
+                          <td class="text-center w-25">
+                              <h4>@registrators[i].LastName @registrators[i].Firstname</h4>
+                              <img src="@String.Format("data:image/png;base64,{0}",Convert.ToBase64String(registrators[i].QR))" height="200" width="200" />
+                          </td>
+                      }
+                      @if ((i + 1) < count)
+                      {
+                          <td class="text-center w-25">
+                              <h4>@registrators[i + 1].LastName @registrators[i+1].Firstname</h4>
+                              <img src="@String.Format("data:image/png;base64,{0}",Convert.ToBase64String(registrators[i+1].QR))" height="200" width="200" />
+                          </td>
+                      }
+                      @if ((i + 2) < count)
+                      {
+                          <td class="text-center w-25">
+                              <h4>@registrators[i + 2].LastName @registrators[i+2].Firstname</h4>
+                              <img src="@String.Format("data:image/png;base64,{0}",Convert.ToBase64String(registrators[i+2].QR))" height="200" width="200" />
+                          </td>
+                      }
+                      @if ((i + 3) < count)
+                      {
+                          <td class="text-center w-25">
+                              <h4>@registrators[i + 3].LastName @registrators[i+3].Firstname</h4>
+                              <img src="@String.Format("data:image/png;base64,{0}",Convert.ToBase64String(registrators[i+3].QR))" height="200" width="200" />
+                          </td>
+                      }
+                  
+                  </tr>
+              }
+         </tbody>
+     </table>
+</body>
+</html>
