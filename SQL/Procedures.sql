@@ -51,3 +51,22 @@ EXEC GetRefereesByTournId 10004;
 
 Drop PROCEDURE GetRefereesByTournId;
 go
+
+--Version 2.1
+
+CREATE PROCEDURE GetRegistratorsByTournId
+	@tournId bigint
+	AS
+BEGIN
+	SELECT usr.Id, usr.Login, usr.Password, usr.LastName, usr.FirstName, usr.RoleId
+	FROM Users as usr
+	JOIN Roles as rl ON rl.Id = usr.RoleId
+	JOIN UsersTournaments as tr ON tr.UserId = usr.Id
+	Where tr.TournamentId = @tournId and rl.Name = 'registrator';
+END;
+go
+
+EXEC GetRegistratorsByTournId 10004;
+
+Drop PROCEDURE GetRegistratorsByTournId;
+go

@@ -64,7 +64,7 @@ cancelDelGrp.addEventListener('click', function () {
 
 $('#dialogDeleteGroup').on('show.bs.modal', function (event) {
     var reference_tag = $(event.relatedTarget);
-    var id = reference_tag.data('id')
+    var id = reference_tag.data('id');
     var name = reference_tag.data('name');
     $("#delGrId").val(id);
     $("#delGrName").text(name);

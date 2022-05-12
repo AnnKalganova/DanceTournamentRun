@@ -62,6 +62,13 @@ namespace DanceTournamentRun.Models
             return referees;
         }
         
+        public List<User> GetRegistratorsByTournId(long tournId)
+        {
+            SqlParameter param = new SqlParameter("@tournId", tournId);
+            var registrators = Users.FromSqlRaw("EXEC GetRegistratorsByTournId @tournId", param).ToList();
+            return registrators;
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -170,12 +177,27 @@ namespace DanceTournamentRun.Models
                     .HasColumnName("isTournamentRun")
                     .HasDefaultValueSql("((0))");
 
+                entity.Property(e => e.IsFirstStepOver)
+                   .HasColumnName("isFirstStepOver")
+                   .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.IsSecondStepOver)
+                    .HasColumnName("isSecondStepOver")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.IsTournamentRun)
+                    .HasColumnName("isTournamentRun")
+                    .HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.Name).IsRequired();
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Tournaments)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_Tournament_User");
+
+                
+
             });
 
             modelBuilder.Entity<User>(entity =>

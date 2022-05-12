@@ -1,0 +1,72 @@
+﻿@model DanceTournamentRun.Models.CreateRegistratorModel
+@{
+    List<User> registrators = ViewBag.registrators;
+}
+
+<div class="d-flex">
+    <table id="regTable" class="table table-striped col-md-9 table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Логин</th>
+                <th scope="col">Фаммлия, Имя</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var registrator in registrators)
+            {
+                <tr>
+                    <td>@registrator.Login</td>
+                    <td>@registrator.LastName @registrator.FirstName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-info  h-25 .col-md-3" data-toggle="modal" data-target="#dialogAddRegistrator">
+        Добавить организатора
+    </button>
+</div>
+
+
+
+<div class="modal fade" id="dialogAddRegistrator" tabindex="-1" role="dialog" aria-labelledby="dialogAddRegistratorCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dialogAddRegistratorCenterTitle">Добавление организатора</h5>
+                <button id="closeAddReg" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form id="addRegForm" asp-anti-forgery="true">
+                    <div class="validation" asp-validation-summary="ModelOnly"></div>
+                    <input type="hidden" id="postId" name="TournamentId" value="@ViewBag.tournamentId">
+                    <div>
+                        <div class="form-group">
+                            <label asp-for="Login">Логин</label>
+                            <input type="text" asp-for="Login" class="form-control" autocomplete="on" placeholder="Введите логин" />
+                            <span asp-validation-for="Login" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="LastName" class="col-form-label">Фамилия</label>
+                            <input type="text" asp-for="LastName" class="form-control" autocomplete="on" placeholder="Введите фамилию" />
+                            <span asp-validation-for="LastName" />
+                            <label asp-for="FirstName" class="col-form-label">Имя</label>
+                            <input type="text" asp-for="FirstName" class="form-control" autocomplete="on" placeholder="Введите имя" />
+                            <span asp-validation-for="FirstName" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelAddReg" type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button id="submitAddReg" type="submit" form="addRegForm" class="btn btn-primary" data-dismiss="modal">Сохранить</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="~/js/SetRegistrator.js" asp-append-version="true"></script>

@@ -2,16 +2,26 @@
 @model Tournament
 @{
     ViewData["Title"] = "Setup Page";
+    ViewData["Login"] = ViewBag.Login;
+    ViewData["isLogin"] = 1;
 }
 
 <div>
     <h1 class="display-4">@Model.Name</h1>
-    <ul class="nav nav-tabs col-md-5">
-        <li class="nav-item"><a onclick="viewGroups(@Model.Id)" class="nav-link" data-toggle="tab" href="#groups">Группы</a></li>
+    <!--<ul class="nav nav-tabs ">-->
+        @*col-md-6*@
+        <!--<li class="nav-item"><a onclick="viewGroups(@Model.Id)" class="nav-link" data-toggle="tab" href="#groups">Группы</a></li>
         <li class="nav-item"><a onclick="viewPairs(@Model.Id)" class="nav-link" data-toggle="tab" href="#pairs">Пары</a></li>
         <li class="nav-item"><a onclick="viewReferees(@Model.Id)" class="nav-link" data-toggle="tab" href="#referees">Судьи</a></li>
-        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#registrators">Организаторы</a></li>
+        <li class="nav-item"><a onclick="viewRegistrators(@Model.Id)" class="nav-link" data-toggle="tab" href="#registrators">Организаторы</a></li>
+        <li class="nav-item"><a onclick="runTournament(@Model.Id)" class="nav-link btn btn-info ">Начать турнир</a></li>
+        <li class="nav-item"></li>
     </ul>
+
+    <button type="button" class="btn btn-outline-info rn-btn rounded-pill">
+        Начать турнир
+    </button>
+
 
 
     <div class="tab-content">
@@ -31,7 +41,45 @@
             </div>
         </div>
         <div id="registrators" class="tab-pane">
-            Здесь будут организаторы
+            <div id="registratorsTable">
+
+            </div>
+        </div>
+    </div>-->
+
+    <div class="row mt-2">
+        <div class="col-2">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a onclick="viewGroups(@Model.Id)" class="nav-link" data-toggle="pill" href="#groups" role="tab">Группы</a>
+                <a onclick="viewPairs(@Model.Id)" class="nav-link" data-toggle="pill" href="#pairs" role="tab">Пары</a>
+                <a onclick="viewReferees(@Model.Id)" class="nav-link" data-toggle="pill" href="#referees">Судьи</a>
+                <a onclick="viewRegistrators(@Model.Id)" class="nav-link" data-toggle="pill" href="#registrators">Организаторы</a>
+                <a href='@Url.Action("RunTourn", "Admin", new { tournId = Model.Id }, null)' class="btn btn-outline-info rn-btn rounded-pill mt-4 ">Начать турнир</a>
+            </div>
+        </div>
+        <div class="col-10">
+            <div class="tab-content" id="v-pills-tabContent">
+                <div id="groups" class="tab-pane" role="tabpanel">
+                    <div id="groupsTable">
+
+                    </div>
+                </div>
+                <div id="pairs" class="tab-pane" role="tabpanel">
+                    <div id="pairsTable">
+
+                    </div>
+                </div>
+                <div id="referees" class="tab-pane" role="tabpanel">
+                    <div id="refereesTable">
+
+                    </div>
+                </div>
+                <div id="registrators" class="tab-pane" role="tabpanel">
+                    <div id="registratorsTable">
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -29,7 +29,6 @@ namespace DanceTournamentRun.Controllers
 
         public IActionResult Index()
         {
-            Console.WriteLine(this.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             long userId = long.Parse(this.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             Tournament tournament = _context.Tournaments.FirstOrDefault(p => p.UserId == userId);
             if (tournament == null)
@@ -38,11 +37,9 @@ namespace DanceTournamentRun.Controllers
             }
             if ((bool)tournament.IsTournamentRun)
             {
-                //redirect to tournament run 
-
+                return RedirectToAction("Index", "RunTournament");
             }
-
-            ViewBag.TournName = tournament.Name;
+            ViewBag.Login = _context.Users.Where(u => u.Id == tournament.UserId).Select(p => p.Login).FirstOrDefault();
             return View("SetupTournament",tournament);
         }
 
@@ -403,25 +400,54 @@ namespace DanceTournamentRun.Controllers
         {
             if (tournId != null)
             {
-                var groups = _context.Groups.Where(p => p.TournamentId == tournId).ToList();
-                List<User> referees = new List<User>();
+                List<User> registrators = new List<User>();
                 using (ApplicationDbContext db = new ApplicationDbContext())
                 {
-                    referees = db.GetRefereesByTourn((long)tournId);
-                }
-                List<RefereeViewModel> refereeViews = new List<RefereeViewModel>();
-                foreach (var referee in referees)
-                {
-                    var refGroupsId = _context.UsersGroups.Where(r => r.UserId == referee.Id).Select(p => p.GroupId).ToArray();
-                    RefereeViewModel viewModel = new RefereeViewModel() { Id = referee.Id, LastName = referee.LastName, FirstName = referee.FirstName, GroupsId = refGroupsId };
-                    refereeViews.Add(viewModel);
+                    registrators = db.GetRegistratorsByTournId((long)tournId);
                 }
                 ViewBag.tournamentId = tournId;
-                ViewBag.refGroups = groups;
-                ViewBag.referees = refereeViews;
+                ViewBag.registrators = registrators;
                 return PartialView("Registrators");
             }
             return PartialView("Error");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddRegistrator(CreateRegistratorModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                //TODO проверка что имейл уникальный
+                var roleId = _context.Roles.Where(r => r.Name == "registrator").Select(d => d.Id).FirstOrDefault();
+                User registrator = new User()
+                {
+                    LastName = model.LastName,
+                    FirstName = model.FirstName,
+                    Login = model.Login,
+                    Password = "1234",
+                    RoleId = roleId
+                };
+                _context.Users.Add(registrator);
+                await _context.SaveChangesAsync();
+
+                UsersTournament usersTournament = new UsersTournament() { TournamentId = model.TournamentId, UserId = registrator.Id };
+                _context.UsersTournaments.Add(usersTournament);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("ViewRegistrators", new { tournId = model.TournamentId });
+            }
+            return NotFound();
+        }
+
+        public async Task<ActionResult> RunTourn(long? tournId)
+        {
+            if(tournId != null)
+            {
+                var tourn = _context.Tournaments.Find(tournId);
+                tourn.IsTournamentRun = true;
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "RunTournament");
+            }
+            return NotFound();
         }
 
         //public ActionResult GetRegLinks()

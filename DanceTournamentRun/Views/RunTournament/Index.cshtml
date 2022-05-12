@@ -1,0 +1,19 @@
+﻿@model Tournament
+@{
+    ViewData["Title"] = "Run Page";
+    ViewData["Login"] = ViewBag.Login;
+    ViewData["isLogin"] = 1;
+}
+
+<div>
+    <h2 class="display-4">@Model.Name <span style="font-size:large;">в процессе</span></h2>
+    <div id="stepView">
+
+    </div>
+</div>
+
+<script>
+    $.get('@Url.Action("GetData", "RunTournament")', { tournId: @Model.Id}, function (content) {
+        $("#stepView").html(content);
+        });
+</script>

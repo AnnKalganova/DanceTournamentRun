@@ -45,4 +45,35 @@ var viewReferees = function (tournId) {
     });
 };
 
+var viewRegistrators = function (tournId) {
+    $.ajax({
+        url: "/Admin/ViewRegistrators",
+        data: { "tournId": tournId },
+        type: "GET",
+        success: function (data) {
+            $('#registratorsTable').html(data);
+        },
+        error: function () {
+            $("#registratorsTable").html("ERROR");
+        }
+    });
+};
+
+$('#runTournament').click(function () {
+    var buttonData = $(this).attr('data');
+    console.log(buttonData);
+    $.ajax({
+        type: "GET",
+        url: "/Admin/RunTourn",
+        data: { "tournId": buttonData },
+        success: function (data) {
+            alert('турнир начался');
+            $('#refereesTable').html(data);
+        },
+        error: function () {
+            alert('Error');
+        }
+
+    });
+});
 

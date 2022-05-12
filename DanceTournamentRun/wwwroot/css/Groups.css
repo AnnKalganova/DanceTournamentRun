@@ -18,3 +18,10 @@
     color: #E74C3C;
     cursor: pointer;
 }
+
+.rn-btn{
+   
+}
+.rn-btn:hover {
+    box-shadow: 0px 7px 10px 1px lightgrey;
+}

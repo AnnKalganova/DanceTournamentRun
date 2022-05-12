@@ -28,3 +28,9 @@ REFERENCES [dbo].[Users] ([Id])
 GO
 ALTER TABLE [dbo].[UsersTournaments] CHECK CONSTRAINT [FK_dbo.UsersTournaments_dbo.Users_UserId]
 GO
+
+--Version 1.2
+ALTER TABLE  [dbo].[Tournaments]
+ADD isFirstStepOver bit Default(0) NULL,
+    isSecondStepOver bit DEFAULT(0) NULL;
+GO
