@@ -11,10 +11,10 @@ BEGIN
 END;
 go
 
-EXEC GetDancesByGroupId 10002;
+--EXEC GetDancesByGroupId 10002;
 
-Drop PROCEDURE GetDancesByGroupId;
-go
+--Drop PROCEDURE GetDancesByGroupId;
+--go
 
 CREATE PROCEDURE GetPairsByTournId
 	@tournId bigint
@@ -28,10 +28,10 @@ BEGIN
 END;
 go
 
-EXEC GetPairsByTournId 1;
+--EXEC GetPairsByTournId 1;
 
-Drop PROCEDURE GetPairsByTournId;
-go
+--Drop PROCEDURE GetPairsByTournId;
+--go
 
 
 --Version 2.0 
@@ -47,10 +47,10 @@ BEGIN
 END;
 go
 
-EXEC GetRefereesByTournId 10004;
+--EXEC GetRefereesByTournId 10004;
 
-Drop PROCEDURE GetRefereesByTournId;
-go
+--Drop PROCEDURE GetRefereesByTournId;
+--go
 
 --Version 2.1
 
@@ -66,7 +66,7 @@ BEGIN
 END;
 go
 
-EXEC GetRegistratorsByTournId 10004;
+--EXEC GetRegistratorsByTournId 10004;
 
-Drop PROCEDURE GetRegistratorsByTournId;
-go
+--Drop PROCEDURE GetRegistratorsByTournId;
+--go
