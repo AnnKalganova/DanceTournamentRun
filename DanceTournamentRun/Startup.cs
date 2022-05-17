@@ -28,6 +28,7 @@ namespace DanceTournamentRun
         public void ConfigureServices(IServiceCollection services)
         {
             string con = "Server=(localdb)\\mssqllocaldb;Database=DanceTournamentRun;Trusted_Connection=True;";
+            // string con = "Server=(local);Database=DanceTournamentRun;Trusted_Connection=True;";
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(con));
 
