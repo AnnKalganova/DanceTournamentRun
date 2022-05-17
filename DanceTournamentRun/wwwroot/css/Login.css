@@ -1,13 +1,8 @@
-﻿@import url('https://fonts.googleapis.com/css?family=Mukta');
+﻿
 
 body {
-    font-family: 'Mukta', sans-serif;
     height: 100vh;
     min-height: 550px;
-   /* background-image: url(http://www.planwallpaper.com/static/images/Free-Wallpaper-Nature-Scenes.jpg);*/
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
     position: relative;
     overflow-y: hidden;
 }
@@ -19,7 +14,7 @@ a {
 
 .login-reg-panel {
     position: relative;
-    top: 50%;
+    top: 40%;
     transform: translateY(-50%);
     text-align: center;
     width: 70%;
@@ -27,12 +22,13 @@ a {
     left: 0;
     margin: auto;
     height: 450px;
-    background-color: rgba(236, 48, 20, 0.9);
+    background: rgb(0,180,219);
+    background: linear-gradient(90deg, rgba(0,180,219,1) 0%, rgba(0,131,176,1) 100%);
 }
 
 .white-panel {
     background-color: rgba(255,255, 255, 1);
-    height: 500px;
+    height: 550px;
     position: absolute;
     top: -50px;
     width: 50%;
@@ -53,7 +49,7 @@ a {
 
     .login-reg-panel #label-login,
     .login-reg-panel #label-register {
-        border: 1px solid #9E9E9E;
+        border: 1px solid white;
         padding: 5px 5px;
         width: 150px;
         display: block;
@@ -62,16 +58,24 @@ a {
         cursor: pointer;
         font-weight: 600;
         font-size: 18px;
+        transition: 0.3s;
     }
 
-.login-info-box {
-    width: 30%;
-    padding: 0 50px;
-    top: 20%;
-    left: 0;
-    position: absolute;
-    text-align: left;
-}
+ .login-reg-panel #label-login:hover,
+ .login-reg-panel #label-register:hover {
+     background: white;
+     color: rgba(0,131,176,1);
+ }
+
+ .login-info-box {
+     width: 30%;
+     padding: 0 50px;
+     top: 20%;
+     left: 0;
+     position: absolute;
+     text-align: left;
+     color: floralwhite;
+ }
 
 .register-info-box {
     width: 30%;
@@ -80,6 +84,7 @@ a {
     right: 0;
     position: absolute;
     text-align: left;
+    color:floralwhite;
 }
 
 .right-log {
@@ -138,6 +143,8 @@ a {
     outline: none;
 }
 
+
+
 .register-show input[type="button"] {
     max-width: 150px;
     width: 100%;
@@ -169,4 +176,11 @@ a {
 a {
     text-decoration: none;
     color: #2c7715;
+}
+
+
+.site-name {
+    font-size: 3.0rem;
+    font-weight: 300;
+    line-height: 0.9;
 }

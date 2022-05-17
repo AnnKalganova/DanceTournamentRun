@@ -29,17 +29,18 @@
 
 
 <!------ Include the above in your HEAD tag ---------->
-<p class="display-4">Проведение танцевальных турниров</p>
+
+<p class="site-name text-center mt-4">Проведение танцевальных турниров</p>
 
 <div class="login-reg-panel">
     <div class="login-info-box">
-        <h2>Уже есть аккаунт?</h2>
+        <h2>Есть аккаунт?</h2>
         <label id="label-register" for="log-reg-show">Login</label>
         <input type="radio" name="active-log-panel" id="log-reg-show" checked="checked">
     </div>
 
     <div class="register-info-box">
-        <h2>Еще нет аккаунта?</h2>
+        <h2>Нет аккаунта?</h2>
         <label id="label-login" for="log-login-show">Register</label>
         <input type="radio" name="active-log-panel" id="log-login-show">
     </div>
@@ -59,7 +60,7 @@
                         @*<span asp-validation-for="Password" />*@
                     </div>
                     <div class="form-group">
-                        <input type="submit" value="Войти" class="btn" />
+                        <input type="submit" value="Войти" class="btn btn-outline-info" />
                     </div>
                 </div>
             </form>
@@ -90,7 +91,7 @@
                         @*<span asp-validation-for="@Model.Item2.ConfirmPassword" />
                     </div>*@
                     <div>
-                        <input type="submit" value="Регистрация" />
+                        <input type="submit" value="Регистрация" class="btn btn-outline-info"/>
                     </div>
                 </div>
             </form>
