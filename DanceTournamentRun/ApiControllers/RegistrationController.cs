@@ -30,12 +30,12 @@ namespace DanceTournamentRun.ApiControllers
         //GET: api/Registration/{token}
         //get user name
         [HttpGet]
-        public ActionResult<string> GetUserInfo(string token)
+        public ActionResult<UserInfoModel> GetUserInfo(string token)
         {
             User user = _context.Users.FirstOrDefault(u => u.SecurityToken == token);
             if (user != null)
             {
-                return user.LastName + " " + user.FirstName;
+                return new UserInfoModel() { LastName = user.LastName, FirstName = user.FirstName};
             }
             return NotFound();
         }
