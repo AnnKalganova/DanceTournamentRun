@@ -38,51 +38,23 @@ namespace DanceTournamentRun.Controllers
             return View(tournament);
         }
 
-        public ActionResult GetData(long? tournId)
+        public PartialViewResult GetData(long? tournId)
         {
             if (tournId != null)
             {
                 var tourn = _context.Tournaments.Find(tournId);
                 if (!(bool)tourn.IsFirstStepOver)
                 {
-                    return RedirectToAction("GetFirstView", tourn);
+                    return PartialView("FirstStep", tourn);
                 }
                 else if (!(bool)tourn.IsSecondStepOver)
                 {
-                    return RedirectToAction("GetSecondView");
+                    return PartialView("SecondStep");
                 }
                 else
                 {
-                    return RedirectToAction("GetThirdView");
+                    return PartialView("EndStep");
                 }
-
-            }
-            return PartialView("Error");
-        }
-
-        public PartialViewResult GetFirstView(Tournament tournament)
-        {
-            if(tournament !=null)
-            {
-                return PartialView("FirstStep", tournament);
-            }
-            return PartialView("Error");
-        }
-
-        public PartialViewResult GetSecondView(Tournament tournament)
-        {
-            if (tournament != null)
-            {
-                return PartialView("SecondStep");
-            }
-            return PartialView("Error");
-        }
-
-        public PartialViewResult GetThirdView(Tournament tournament)
-        {
-            if (tournament != null)
-            {
-                return PartialView("EndStep");
             }
             return PartialView("Error");
         }
@@ -101,8 +73,7 @@ namespace DanceTournamentRun.Controllers
                 List<RegViewModel> regViews = new List<RegViewModel>();
                 foreach (var reg in registrators)
                 {
-                    QRRegData data = new QRRegData() { Login = reg.Login, LastName = reg.LastName, Firstname = reg.FirstName };
-                    var link = JsonConvert.SerializeObject(data);
+                    var link = "http://192.168.1.14:41837/api/Registration/" + reg.SecurityToken;
                     QRCodeGenerator qrGenerator = new QRCodeGenerator();
                     QRCodeData qrCodeData = qrGenerator.CreateQrCode(link, QRCodeGenerator.ECCLevel.Q);
                     QRCode qrCode = new QRCode(qrCodeData);
@@ -131,8 +102,7 @@ namespace DanceTournamentRun.Controllers
                 List<RegViewModel> refViews = new List<RegViewModel>();
                 foreach (var referee in referees)
                 {
-                    QRRegData data = new QRRegData() { Login = referee.Login, LastName = referee.LastName, Firstname = referee.FirstName };
-                    var link = JsonConvert.SerializeObject(data);
+                    var link = "http://192.168.1.14:41837/api/Referee/" + referee.SecurityToken;
                     QRCodeGenerator qrGenerator = new QRCodeGenerator();
                     QRCodeData qrCodeData = qrGenerator.CreateQrCode(link, QRCodeGenerator.ECCLevel.Q);
                     QRCode qrCode = new QRCode(qrCodeData);

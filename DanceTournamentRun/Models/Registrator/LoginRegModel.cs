@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace DanceTournamentRun.Models
 {
-    public class QRRegData
+    public class LoginRegModel
     {
         public string Login { get; set; }
-        public string LastName { get; set; }
-        public string Firstname { get; set; }
+        public string Password { get; set; }
     }
 }

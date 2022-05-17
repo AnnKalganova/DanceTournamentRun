@@ -3,49 +3,11 @@
 @{
     ViewData["Title"] = "Setup Page";
     ViewData["Login"] = ViewBag.Login;
-    ViewData["isLogin"] = 1;
+    ViewData["TName"] = Model.Name;
 }
 
 <div>
-    <h1 class="display-4">@Model.Name</h1>
-    <!--<ul class="nav nav-tabs ">-->
-        @*col-md-6*@
-        <!--<li class="nav-item"><a onclick="viewGroups(@Model.Id)" class="nav-link" data-toggle="tab" href="#groups">Группы</a></li>
-        <li class="nav-item"><a onclick="viewPairs(@Model.Id)" class="nav-link" data-toggle="tab" href="#pairs">Пары</a></li>
-        <li class="nav-item"><a onclick="viewReferees(@Model.Id)" class="nav-link" data-toggle="tab" href="#referees">Судьи</a></li>
-        <li class="nav-item"><a onclick="viewRegistrators(@Model.Id)" class="nav-link" data-toggle="tab" href="#registrators">Организаторы</a></li>
-        <li class="nav-item"><a onclick="runTournament(@Model.Id)" class="nav-link btn btn-info ">Начать турнир</a></li>
-        <li class="nav-item"></li>
-    </ul>
-
-    <button type="button" class="btn btn-outline-info rn-btn rounded-pill">
-        Начать турнир
-    </button>
-
-
-
-    <div class="tab-content">
-        <div id="groups" class="tab-pane">
-            <div id="groupsTable">
-
-            </div>
-        </div>
-        <div id="pairs" class="tab-pane">
-            <div id="pairsTable">
-
-            </div>
-        </div>
-        <div id="referees" class="tab-pane">
-            <div id="refereesTable">
-
-            </div>
-        </div>
-        <div id="registrators" class="tab-pane">
-            <div id="registratorsTable">
-
-            </div>
-        </div>
-    </div>-->
+    @*<h1 class="display-4">@Model.Name</h1>*@
 
     <div class="row mt-2">
         <div class="col-2">
@@ -85,5 +47,41 @@
 </div>
 
 
+<!--<ul class="nav nav-tabs ">-->
+@*col-md-6*@
+<!--<li class="nav-item"><a onclick="viewGroups(@Model.Id)" class="nav-link" data-toggle="tab" href="#groups">Группы</a></li>
+    <li class="nav-item"><a onclick="viewPairs(@Model.Id)" class="nav-link" data-toggle="tab" href="#pairs">Пары</a></li>
+    <li class="nav-item"><a onclick="viewReferees(@Model.Id)" class="nav-link" data-toggle="tab" href="#referees">Судьи</a></li>
+    <li class="nav-item"><a onclick="viewRegistrators(@Model.Id)" class="nav-link" data-toggle="tab" href="#registrators">Организаторы</a></li>
+    <li class="nav-item"><a onclick="runTournament(@Model.Id)" class="nav-link btn btn-info ">Начать турнир</a></li>
+    <li class="nav-item"></li>
+</ul>
+
+<button type="button" class="btn btn-outline-info rn-btn rounded-pill">
+    Начать турнир
+</button>
 
 
+
+<div class="tab-content">
+    <div id="groups" class="tab-pane">
+        <div id="groupsTable">
+
+        </div>
+    </div>
+    <div id="pairs" class="tab-pane">
+        <div id="pairsTable">
+
+        </div>
+    </div>
+    <div id="referees" class="tab-pane">
+        <div id="refereesTable">
+
+        </div>
+    </div>
+    <div id="registrators" class="tab-pane">
+        <div id="registratorsTable">
+
+        </div>
+    </div>
+</div>-->

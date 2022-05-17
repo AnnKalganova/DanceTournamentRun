@@ -20,6 +20,8 @@ namespace DanceTournamentRun.Models
         public long RoleId { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
+        public string SecurityToken { get; set; }
+
         public virtual Role Role { get; set; }
         public virtual ICollection<Point> Points { get; set; }
         public virtual ICollection<Tournament> Tournaments { get; set; }

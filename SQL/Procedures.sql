@@ -11,10 +11,10 @@ BEGIN
 END;
 go
 
-EXEC GetDancesByGroupId 10002;
+--EXEC GetDancesByGroupId 10002;
 
-Drop PROCEDURE GetDancesByGroupId;
-go
+--Drop PROCEDURE GetDancesByGroupId;
+--go
 
 CREATE PROCEDURE GetPairsByTournId
 	@tournId bigint
@@ -28,18 +28,18 @@ BEGIN
 END;
 go
 
-EXEC GetPairsByTournId 1;
+--EXEC GetPairsByTournId 1;
 
-Drop PROCEDURE GetPairsByTournId;
-go
+--Drop PROCEDURE GetPairsByTournId;
+--go
 
 
---Version 2.0 
+--Version 2.0 UPDATE 17.05 add usr.Token
 CREATE PROCEDURE GetRefereesByTournId
 	@tournId bigint
 	AS
 BEGIN
-	SELECT usr.Id, usr.Login, usr.Password, usr.LastName, usr.FirstName, usr.RoleId
+	SELECT usr.Id, usr.Login, usr.Password, usr.LastName, usr.FirstName, usr.RoleId, usr.SecurityToken
 	FROM Users as usr
 	JOIN Roles as rl ON rl.Id = usr.RoleId
 	JOIN UsersTournaments as tr ON tr.UserId = usr.Id
@@ -47,18 +47,18 @@ BEGIN
 END;
 go
 
-EXEC GetRefereesByTournId 10004;
+--EXEC GetRefereesByTournId 10004;
 
-Drop PROCEDURE GetRefereesByTournId;
-go
+--Drop PROCEDURE GetRefereesByTournId;
+--go
 
---Version 2.1
+--Version 2.1 UPDATE 17.05 GetRegistratorsByTournId add usr.SecurityToken
 
 CREATE PROCEDURE GetRegistratorsByTournId
 	@tournId bigint
 	AS
 BEGIN
-	SELECT usr.Id, usr.Login, usr.Password, usr.LastName, usr.FirstName, usr.RoleId
+	SELECT usr.Id, usr.Login, usr.Password, usr.LastName, usr.FirstName, usr.RoleId, usr.SecurityToken
 	FROM Users as usr
 	JOIN Roles as rl ON rl.Id = usr.RoleId
 	JOIN UsersTournaments as tr ON tr.UserId = usr.Id
@@ -66,7 +66,26 @@ BEGIN
 END;
 go
 
-EXEC GetRegistratorsByTournId 10004;
+--EXEC GetRegistratorsByTournId 10004;
 
-Drop PROCEDURE GetRegistratorsByTournId;
+--Drop PROCEDURE GetRegistratorsByTournId;
+--go
+
+
+--Version from 17.05 12:18 UPDATE GetGroupsByUserId
+CREATE PROCEDURE GetGroupsByToken
+	@token nvarchar
+	AS
+BEGIN
+	SELECT gr.Id, gr.isCompetitionOn, gr.isRegistrationOn, gr.Name, gr.Number, gr.TournamentId
+	FROM Groups as gr
+	JOIN UsersGroups as usGr ON usGr.GroupId = gr.Id
+	JOIN Users as u ON u.Id = usGr.UserId
+	Where u.SecurityToken = @token;
+END;
 go
+
+--EXEC GetGroupsByToken 20004;
+
+--Drop PROCEDURE GetGroupsByToken;
+--go

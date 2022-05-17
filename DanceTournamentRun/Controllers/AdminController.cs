@@ -374,8 +374,9 @@ namespace DanceTournamentRun.Controllers
                     LastName = model.LastName, 
                     FirstName = model.FirstName,
                     Login = model.Login, 
-                    Password = "1234",
-                    RoleId = roleId
+                    Password = Guid.NewGuid().ToString(),
+                    RoleId = roleId,
+                    SecurityToken = Guid.NewGuid().ToString()
                 };
                 _context.Users.Add(referee);
                 await _context.SaveChangesAsync();
@@ -424,8 +425,9 @@ namespace DanceTournamentRun.Controllers
                     LastName = model.LastName,
                     FirstName = model.FirstName,
                     Login = model.Login,
-                    Password = "1234",
-                    RoleId = roleId
+                    Password = Guid.NewGuid().ToString(),
+                    RoleId = roleId,
+                    SecurityToken = Guid.NewGuid().ToString()
                 };
                 _context.Users.Add(registrator);
                 await _context.SaveChangesAsync();

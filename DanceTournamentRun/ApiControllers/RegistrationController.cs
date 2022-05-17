@@ -1,17 +1,22 @@
 ﻿using DanceTournamentRun.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DanceTournamentRun.ApiControllers
 {
     [EnableCors("AllowMyOrigin")]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/{token}")]
     [ApiController]
     public class RegistrationController : ControllerBase
     {
@@ -20,6 +25,35 @@ namespace DanceTournamentRun.ApiControllers
         public RegistrationController(ApplicationDbContext context)
         {
             _context = context;
+        }
+
+        //GET: api/Registration/{token}
+        //get user name
+        [HttpGet]
+        public ActionResult<string> GetUserInfo(string token)
+        {
+            User user = _context.Users.FirstOrDefault(u => u.SecurityToken == token);
+            if (user != null)
+            {
+                return user.LastName + " " + user.FirstName;
+            }
+            return NotFound();
+        }
+
+
+        //GET: api/Registration/{token}/groups
+        //get groups by token
+        [HttpGet("groups")]
+        public ActionResult<List<Group>> GetGroups(string token) {
+
+            List<Group> groups = new List<Group>();
+            using (ApplicationDbContext db = new ApplicationDbContext())
+            {
+                groups = db.GetGroupsByToken(token);
+            }
+            if (groups.Count() == 0)
+                return NotFound();
+            return groups;
         }
 
         // GET: api/Registration/groupsByDept/3
@@ -49,6 +83,7 @@ namespace DanceTournamentRun.ApiControllers
         [HttpGet("pair/{Id}")]
         public async Task<ActionResult<Pair>> GetPair(long Id)
         {
+
             var pair = await _context.Pairs.FindAsync(Id);
             if (pair == null)
             {
@@ -58,14 +93,14 @@ namespace DanceTournamentRun.ApiControllers
         }
 
         // POST: api/Registration
-        [HttpPost]
-        public async Task<ActionResult<Pair>> CreatePair(Pair pair)
-        {
-            _context.Pairs.Add(pair);
-            await _context.SaveChangesAsync();
+        //[HttpPost]
+        //public async Task<ActionResult<Pair>> CreatePair(Pair pair)
+        //{
+        //    _context.Pairs.Add(pair);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPair", new { id = pair.Id }, pair);
-        }
+        //    return CreatedAtAction("GetPair", new { id = pair.Id }, pair);
+        //}
 
         // PUT: api/Registration/5/3
         [HttpPut("{id}/{number}")]

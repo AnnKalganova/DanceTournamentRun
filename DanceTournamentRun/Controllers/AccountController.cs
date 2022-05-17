@@ -1,12 +1,14 @@
 ﻿using DanceTournamentRun.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace DanceTournamentRun.Controllers
@@ -33,7 +35,8 @@ namespace DanceTournamentRun.Controllers
                 if (user == null)
                 {
                     // добавляем пользователя в бд
-                    user = new User { Login = model.Login, LastName = model.LastName, FirstName = model.FirstName ,Password = model.Password };
+                    var hashedPassword = GeneratePasswordHash(model.Password);
+                    user = new User { Login = model.Login, LastName = model.LastName, FirstName = model.FirstName ,Password = hashedPassword };
                     Role userRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "admin");
                     if (userRole != null)
                         user.Role = userRole;
@@ -61,9 +64,10 @@ namespace DanceTournamentRun.Controllers
         {
             if (ModelState.IsValid)
             {
+                var hash = GeneratePasswordHash(model.Password);
                 User user = await _context.Users
                     .Include(u => u.Role)
-                    .FirstOrDefaultAsync(u => u.Login == model.Login && u.Password == model.Password);
+                    .FirstOrDefaultAsync(u => u.Login == model.Login && u.Password == hash);
                 if (user != null)
                 {
                     await Authenticate(user); // аутентификация
@@ -96,5 +100,22 @@ namespace DanceTournamentRun.Controllers
             // установка аутентификационных куки
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
+
+        private string GeneratePasswordHash(string password)
+        {
+            byte[] salt = new byte[128 / 8];
+            using (var rngCsp = new RNGCryptoServiceProvider())
+            {
+                rngCsp.GetNonZeroBytes(salt);
+            }
+            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password: password,
+            salt: salt,
+            prf: KeyDerivationPrf.HMACSHA256,
+            iterationCount: 1000,
+            numBytesRequested: 256 / 8));
+            return hashed;
+        }
+
     }
 }

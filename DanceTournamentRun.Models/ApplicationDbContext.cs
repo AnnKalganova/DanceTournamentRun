@@ -69,6 +69,13 @@ namespace DanceTournamentRun.Models
             return registrators;
         }
 
+        public List<Group> GetGroupsByToken(string token)
+        {
+            SqlParameter param = new SqlParameter("@token", token);
+            var groups = Groups.FromSqlRaw("EXEC GetGroupsByToken @token", param).ToList();
+            return groups;
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -202,11 +209,20 @@ namespace DanceTournamentRun.Models
 
             modelBuilder.Entity<User>(entity =>
             {
+                entity.Property(e => e.FirstName)
+                    .IsRequired()
+                    .HasMaxLength(40);
+
+                entity.Property(e => e.LastName)
+                   .IsRequired()
+                   .HasMaxLength(50);
+
                 entity.Property(e => e.Login).IsRequired();
 
                 entity.Property(e => e.Password)
-                    .IsRequired()
-                    .HasMaxLength(30);
+                    .IsRequired();
+
+                entity.Property(e => e.SecurityToken).HasMaxLength(50);
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Users)

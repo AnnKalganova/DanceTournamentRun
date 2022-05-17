@@ -34,3 +34,13 @@ ALTER TABLE  [dbo].[Tournaments]
 ADD isFirstStepOver bit Default(0) NULL,
     isSecondStepOver bit DEFAULT(0) NULL;
 GO
+
+
+--Version 1.3 16.05 14:23
+ALTER TABLE [dbo].[Users]
+ALTER COLUMN Password nvarchar(max) not null;
+go
+
+ALTER TABLE  [dbo].[Users]
+ADD SecurityToken nvarchar(50) NULL;
+GO
