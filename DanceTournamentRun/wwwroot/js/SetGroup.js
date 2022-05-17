@@ -25,6 +25,7 @@ $('#submitAddGrp').on('click', function (e) {
         }
 
     });
+    $(".modal-backdrop").remove();
 });
 
 $(document).on('click', '.btn-add.addGr', function (event) {
@@ -150,6 +151,7 @@ $('#submitEditGrp').on('click', function (e) {
         }
 
     });
+    $(".modal-backdrop").remove();
 });
 
 $(document).on('click', '.btn-add.editGr', function (event) {

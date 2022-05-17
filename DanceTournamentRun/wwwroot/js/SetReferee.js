@@ -30,4 +30,5 @@ $('#submitAddReferee').on('click', function (e) {
         }
 
     });
+    $(".modal-backdrop").remove();
 });

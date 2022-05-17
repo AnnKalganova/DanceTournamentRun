@@ -14,4 +14,5 @@
         }
 
     });
+    $(".modal-backdrop").remove();
 });

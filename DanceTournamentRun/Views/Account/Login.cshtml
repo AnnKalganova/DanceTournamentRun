@@ -1,9 +1,9 @@
-﻿@model DanceTournamentRun.Models.LoginModel
+﻿@*@model Tuple<DanceTournamentRun.Models.LoginModel, DanceTournamentRun.Models.RegisterModel>*@ 
 
 @{
     ViewData["Title"] = "Login Page";
 }
-<h2>Вход на сайт</h2>
+@*<h2>Вход на сайт</h2>
 
 <a asp-action="Register" asp-controller="Account">Регистрация</a>
 
@@ -11,9 +11,9 @@
     <div class="validation" asp-validation-summary="ModelOnly"></div>
     <div>
         <div class="form-group">
-            <label asp-for="Login">Введите логин</label>
-            <input type="text" asp-for="Login" />
-            <span asp-validation-for="Login" />
+            <label asp-for="@Model.Item1.Login">Введите логин</label>
+            <input type="text" asp-for="@Model.Item1.Login" />
+            <span asp-validation-for="@Model.Item1.Login" />
         </div>
         <div class="form-group">
             <label asp-for="Password">Введите пароль</label>
@@ -24,4 +24,80 @@
             <input type="submit" value="Войти" class="btn" />
         </div>
     </div>
-</form>
+</form>*@
+
+
+
+<!------ Include the above in your HEAD tag ---------->
+<p class="display-4">Проведение танцевальных турниров</p>
+
+<div class="login-reg-panel">
+    <div class="login-info-box">
+        <h2>Уже есть аккаунт?</h2>
+        <label id="label-register" for="log-reg-show">Login</label>
+        <input type="radio" name="active-log-panel" id="log-reg-show" checked="checked">
+    </div>
+
+    <div class="register-info-box">
+        <h2>Еще нет аккаунта?</h2>
+        <label id="label-login" for="log-login-show">Register</label>
+        <input type="radio" name="active-log-panel" id="log-login-show">
+    </div>
+
+    <div class="white-panel">
+        <div class="login-show">
+            <h2>LOGIN</h2>
+            <form asp-action="Login" asp-controller="Account" asp-anti-forgery="true">
+                <div class="validation" asp-validation-summary="ModelOnly"></div>
+                <div>
+                    <div class="form-group">
+                        <input type="text" for="Login" placeholder="Введите логин"/>
+                        @*<span asp-validation-for="@Model.Item1.Login" />*@
+                    </div>
+                    <div class="form-group">
+                        <input type="password" for="Password" placeholder="Введите пароль"/>
+                        @*<span asp-validation-for="Password" />*@
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Войти" class="btn" />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="register-show">
+            <h2>REGISTER</h2>
+            <form asp-action="Register" asp-controller="Account" asp-anti-forgery="true">
+                <div class="validation" asp-validation-summary="ModelOnly"></div>
+                <div>
+                    <div>
+                        <input type="text" for="Login" placeholder="Введите логин"/>
+                        @*<span asp-validation-for="@Model.Item2.Login" />*@
+                    </div>
+                    <div>
+                        <input type="text" for="LastName" placeholder="Введите фамилию"/>
+                        @*<span asp-validation-for="@Model.Item2.LastName" />*@
+                    </div>
+                    <div>
+                        <input type="text" for="FirstName" placeholder="Введите имя"/>
+                        @*<span asp-validation-for="@Model.Item2.FirstName" />*@
+                    </div>
+                    <div>
+                        <input type="password" for="Password" placeholder="Введите пароль"/>
+                        @*<span asp-validation-for="Password" />*@
+                    </div>
+                    <div>
+                        <input type="password" for="ConfirmPassword" placeholder="Повторите пароль"/>
+                        @*<span asp-validation-for="@Model.Item2.ConfirmPassword" />
+                    </div>*@
+                    <div>
+                        <input type="submit" value="Регистрация" />
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+</div>
+
+<script src="~/js/Login.js" asp-append-version="true"></script>
