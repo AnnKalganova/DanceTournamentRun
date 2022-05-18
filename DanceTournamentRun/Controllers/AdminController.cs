@@ -237,7 +237,6 @@ namespace DanceTournamentRun.Controllers
                         db.SaveChangesAsync();
                     }
                 }
-                   
             }
         }
 
@@ -248,7 +247,6 @@ namespace DanceTournamentRun.Controllers
             {
                 //delete dances
                 var dancesId = _context.GroupsDances.Where(x => x.GroupId == groupId).Select(p => p.DanceId).ToList();
-
                 if (dancesId.Count() != 0)
                 {
                     foreach (var danceId in dancesId)
@@ -258,7 +256,6 @@ namespace DanceTournamentRun.Controllers
                         await _context.SaveChangesAsync();
                     }
                 }
-
                 ////delete group
                 var group = _context.Groups.Find(groupId);
                 var tournId = group.TournamentId;
@@ -324,18 +321,68 @@ namespace DanceTournamentRun.Controllers
         {
             if (ModelState.IsValid)
             {
-                //TODO проверка что такая уже есть в группе
-                Pair newPair = new Pair()
+                int countSimilarP1, countSimilarP2;
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
-                    GroupId = model.GroupId,
-                    Partner1LastName = model.Partner1LastName,
-                    Partner1FirstName = model.Partner1FirstName,
-                    Partner2LastName = model.Partner2LastName,
-                    Partner2FirstName = model.Partner2FirstName
-                };
-                _context.Pairs.Add(newPair);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("ViewPairs", new { tournId = model.TournamentId});
+                    countSimilarP1 = db.FindSimilarPartner(model.GroupId, model.Partner1LastName, model.Partner1FirstName);
+                    countSimilarP2 = db.FindSimilarPartner(model.GroupId, model.Partner2LastName, model.Partner2FirstName);
+                }
+                if(countSimilarP1 == 0 && countSimilarP2 == 0)
+                {
+                    Pair newPair = new Pair()
+                    {
+                        GroupId = model.GroupId,
+                        Partner1LastName = model.Partner1LastName,
+                        Partner1FirstName = model.Partner1FirstName,
+                        Partner2LastName = model.Partner2LastName,
+                        Partner2FirstName = model.Partner2FirstName
+                    };
+                    _context.Pairs.Add(newPair);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("ViewPairs", new { tournId = model.TournamentId });
+                }
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> EditPair(Pair editPair)
+        {
+            if (ModelState.IsValid)
+            {
+                var oldPair = _context.Pairs.Find(editPair.Id);
+                if(oldPair.Partner1LastName!= editPair.Partner1LastName || oldPair.Partner1FirstName != editPair.Partner1FirstName)
+                {
+                    int countSimilar;
+                    using (ApplicationDbContext db = new ApplicationDbContext())
+                    {
+                        countSimilar = db.FindSimilarPartner(oldPair.GroupId, editPair.Partner1LastName, editPair.Partner1FirstName);
+                    }
+                    if (countSimilar == 0)
+                    {
+                        oldPair.Partner1LastName = editPair.Partner1LastName;
+                        oldPair.Partner1FirstName = editPair.Partner1FirstName;
+                        await _context.SaveChangesAsync();
+                    }
+                    else return NotFound();
+                }
+                else if (oldPair.Partner2LastName != editPair.Partner2LastName || oldPair.Partner2FirstName != editPair.Partner2FirstName)
+                {
+                    int countSimilar;
+                    using (ApplicationDbContext db = new ApplicationDbContext())
+                    {
+                        countSimilar = db.FindSimilarPartner(oldPair.GroupId, editPair.Partner2LastName, editPair.Partner2FirstName);
+                    }
+                    if (countSimilar == 0)
+                    {
+                        oldPair.Partner2LastName = editPair.Partner2LastName;
+                        oldPair.Partner2FirstName = editPair.Partner2FirstName;
+                        await _context.SaveChangesAsync();
+                    }
+                    else return NotFound();
+                }
+                var group = _context.Groups.Find(oldPair.GroupId);
+                return RedirectToAction("ViewPairs", new { tournId = group.TournamentId });
             }
             return NotFound();
         }

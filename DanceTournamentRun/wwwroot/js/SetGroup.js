@@ -39,7 +39,7 @@ $(document).on('click', '.btn-add.addGr', function (event) {
         .removeClass('btn-success').addClass('btn-danger')
         .html('<span class="oi oi-minus" title="icon name" aria-hidden="true"></span>');
 
-    var inputs = $('.controls.addGr .form-control');
+    var inputs = $('.controls.addGr .form-control.addGr');
     $.each(inputs, function (index, item) {
         item.name = 'Dances[' + index + ']';
     });
@@ -48,7 +48,7 @@ $(document).on('click', '.btn-add.addGr', function (event) {
 $(document).on('click', '.btn-remove.addGr', function (event) {
     event.preventDefault();
     $(this).parents('.entry:first').remove();
-    var inputs = $('.controls.addGr .form-control');
+    var inputs = $('.controls.addGr .form-control.addGr');
     $.each(inputs, function (index, item) {
         item.name = 'Dances[' + index + ']';
     });
@@ -102,25 +102,27 @@ $("#dialogEditGroup").on('show.bs.modal', function (e) {
     $(e.currentTarget).find('input[name="Name"]').val(grName);
     $(e.currentTarget).find('input[name="Number"]').val(grNumber);
 
-    $(e.currentTarget).find('input[name="Dances[0]"]').val(dancesObj[0].Name);
+    if (dancesObj.length != 0) {
+        $(e.currentTarget).find('input[name="Dances[0]"]').val(dancesObj[0].Name);
 
-    if (dancesObj.length >= 2) {
-        for (var i = 1; i < dancesObj.length; i++) {
-            var controlForm = $('.controls.editGr');
-            var currentEntry = $('.form-control.editGr').parents('.entry:first');
-            var newEntry = $(currentEntry.clone()).appendTo(controlForm);
-            newEntry.find('input').val(dancesObj[i].Name);
-            controlForm.find('.entry:not(:last) .btn-add.editGr')
-                .removeClass('btn-add').addClass('btn-remove')
-                .removeClass('btn-success').addClass('btn-danger')
-                .html('<span class="oi oi-minus" title="icon name" aria-hidden="true"></span>');
-            var inputs = $('.controls.editGr .form-control');
-            $.each(inputs, function (index, item) {
-                item.name = 'Dances[' + index + ']';
-            });
+        if (dancesObj.length >= 2) {
+            for (var i = 1; i < dancesObj.length; i++) {
+                var controlForm = $('.controls.editGr');
+                var currentEntry = $('.form-control.editGr').parents('.entry:first');
+                var newEntry = $(currentEntry.clone()).appendTo(controlForm);
+                newEntry.find('input').val(dancesObj[i].Name);
+                controlForm.find('.entry:not(:last) .btn-add.editGr')
+                    .removeClass('btn-add').addClass('btn-remove')
+                    .removeClass('btn-success').addClass('btn-danger')
+                    .html('<span class="oi oi-minus" title="icon name" aria-hidden="true"></span>');
+                var inputs = $('.controls.editGr #grEditInput');
+                $.each(inputs, function (index, item) {
+                    item.name = 'Dances[' + index + ']';
+                });
+            }
         }
- 
     }
+    
    // $(e.currentTarget).find('input[name="ViewModel.PropertyB"]').val();
 });
 
@@ -129,7 +131,7 @@ $("#dialogEditGroup").on('hidden.bs.modal', function (e) {
         $(this).remove();
     });
 
-    var inputs = $('.controls.editGr .form-control');
+    var inputs = $('.controls.editGr #grEditInput');
     $.each(inputs, function (index, item) {
         item.name = 'Dances[' + index + ']';
     });
@@ -165,7 +167,7 @@ $(document).on('click', '.btn-add.editGr', function (event) {
         .removeClass('btn-success').addClass('btn-danger')
         .html('<span class="oi oi-minus" title="icon name" aria-hidden="true"></span>');
 
-    var inputs = $('.controls.editGr .form-control');
+    var inputs = $('.controls.editGr #grEditInput');
     $.each(inputs, function (index, item) {
         item.name = 'Dances[' + index + ']';
     });
@@ -174,7 +176,7 @@ $(document).on('click', '.btn-add.editGr', function (event) {
 $(document).on('click', '.btn-remove.editGr', function (event) {
     event.preventDefault();
     $(this).parents('.entry:first').remove();
-    var inputs = $('.controls.editGr .form-control');
+    var inputs = $('.controls.editGr #grEditInput');
     $.each(inputs, function (index, item) {
         item.name = 'Dances[' + index + ']';
     });

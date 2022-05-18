@@ -17,20 +17,20 @@ a {
     top: 40%;
     transform: translateY(-50%);
     text-align: center;
-    width: 70%;
+    width: 60%;
     right: 0;
     left: 0;
     margin: auto;
-    height: 450px;
+    height: 60%;
     background: rgb(0,180,219);
     background: linear-gradient(90deg, rgba(0,180,219,1) 0%, rgba(0,131,176,1) 100%);
 }
 
 .white-panel {
     background-color: rgba(255,255, 255, 1);
-    height: 550px;
+    height: 120%;
     position: absolute;
-    top: -50px;
+    top: -10%;
     width: 50%;
     right: calc(50% - 50px);
     transition: .3s ease-in-out;
@@ -68,8 +68,8 @@ a {
  }
 
  .login-info-box {
-     width: 30%;
-     padding: 0 50px;
+     width: 35%;
+     padding: 0 30px;
      top: 20%;
      left: 0;
      position: absolute;
@@ -99,7 +99,7 @@ a {
     transition: 0.3s ease-in-out;
     color: #242424;
     text-align: left;
-    padding: 50px;
+    padding: 30px;
 }
 
 .show-log-panel {
@@ -110,8 +110,8 @@ a {
 .login-show input[type="text"], .login-show input[type="password"] {
     width: 100%;
     display: block;
-    margin: 20px 0;
-    padding: 15px;
+    margin:15px 0;
+    padding: 10px;
     border: 1px solid #b5b5b5;
     outline: none;
 }
@@ -137,8 +137,8 @@ a {
 .register-show input[type="text"], .register-show input[type="password"] {
     width: 100%;
     display: block;
-    margin: 20px 0;
-    padding: 15px;
+    margin: 15px 0;
+    padding: 10px;
     border: 1px solid #b5b5b5;
     outline: none;
 }

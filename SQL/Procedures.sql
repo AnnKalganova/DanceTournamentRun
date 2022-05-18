@@ -34,7 +34,7 @@ go
 --go
 
 
---Version 2.0 UPDATE 17.05 add usr.Token
+--Version 2.0 UPDATE 17.05 
 CREATE PROCEDURE GetRefereesByTournId
 	@tournId bigint
 	AS
@@ -52,7 +52,7 @@ go
 --Drop PROCEDURE GetRefereesByTournId;
 --go
 
---Version 2.1 UPDATE 17.05 GetRegistratorsByTournId add usr.SecurityToken
+--Version 2.1 UPDATE 17.05
 
 CREATE PROCEDURE GetRegistratorsByTournId
 	@tournId bigint
@@ -72,7 +72,7 @@ go
 --go
 
 
---Version from 17.05 12:18 UPDATE GetGroupsByUserId
+--Version from 17.05 12:18 
 CREATE PROCEDURE GetGroupsByToken
 	@token nvarchar
 	AS
@@ -89,3 +89,26 @@ go
 
 --Drop PROCEDURE GetGroupsByToken;
 --go
+
+
+--Version from 18.05 19:12
+
+CREATE PROCEDURE FindSimilarPartner
+ @groupId bigint, @lastName nvarchar(40), @firstName nvarchar(40), @count int OUTPUT
+	AS
+	SELECT @count = COUNT(p.Id)
+	FROM Pairs as p
+	Where  p.GroupId = @groupId and ((p.Partner1LastName =  @lastName and p.Partner1FirstName =@firstName )
+	or (p.Partner2LastName = @lastName and p.Partner2FirstName = @firstName));
+go
+
+
+--DECLARE @count int
+--EXEC FindSimilarPartner 70002,  N'Шкиндеров', N'Влад', @count OUTPUT
+--PRINT N'Минимальная цена ' + CONVERT(VARCHAR, @count)
+--go
+
+--Drop PROCEDURE FindSimilarPartner;
+--go
+
+

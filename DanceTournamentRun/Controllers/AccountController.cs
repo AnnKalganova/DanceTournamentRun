@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace DanceTournamentRun.Controllers
@@ -16,9 +18,11 @@ namespace DanceTournamentRun.Controllers
     public class AccountController : Controller
     {
         private ApplicationDbContext _context;
-        public AccountController(ApplicationDbContext context)
+        private readonly IConfiguration _configuration;
+        public AccountController(ApplicationDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
         [HttpGet]
         public IActionResult Register()
@@ -103,11 +107,13 @@ namespace DanceTournamentRun.Controllers
 
         private string GeneratePasswordHash(string password)
         {
-            byte[] salt = new byte[128 / 8];
-            using (var rngCsp = new RNGCryptoServiceProvider())
-            {
-                rngCsp.GetNonZeroBytes(salt);
-            }
+            var saltStr =_configuration["Salt"];
+            byte[] salt = Encoding.ASCII.GetBytes(saltStr);
+            // byte[] salt = new byte[128 / 8];
+            //using (var rngCsp = new RNGCryptoServiceProvider())
+            //{
+            //    rngCsp.GetNonZeroBytes(salt);
+            //}
             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
             password: password,
             salt: salt,
