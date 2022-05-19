@@ -44,8 +44,8 @@
                                       data-p2LastName="@pair.Partner2LastName" data-p2FirstName="@pair.Partner2FirstName" >
                                     <span class="oi oi-pencil" title="Изменить" aria-hidden="true"></span>
                                 </span>
-                                <span id="delGrBtn" class="gr-btn gr-btn-del" data-toggle="modal" data-target="#dialogDeleteGroup"
-                                      data-id="@pair.Id">
+                                <span id="delGrBtn" class="gr-btn gr-btn-del" data-toggle="modal" data-target="#dialogDeletePair"
+                                      data-id="@pair.Id" data-name="@pair.Partner1LastName @pair.Partner1FirstName - @pair.Partner2LastName @pair.Partner2FirstName">
                                     <span class="oi oi-trash" title="Удалить" aria-hidden="true"></span>
                                 </span>
                             </td>
@@ -157,5 +157,22 @@
     </div>
 </div>
 
+
+<div class="modal fade" id="dialogDeletePair" tabindex="-1" role="dialog" aria-labelledby="dialogDeletePairCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form id="delPairForm" asp-anti-forgery="true">
+                    <input id="delPairId" type="hidden" name="pairId" value="">
+                    <label class="col-form-label"> Вы уверены, что хотите удалить пару <strong><span id="delPairName"> </span></strong>?</label>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelDelPair" type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button id="submitDelPair" type="submit" form="delPairForm" class="btn btn-primary" data-dismiss="modal">Удалить</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="~/js/SetPair.js" asp-append-version="true"></script>

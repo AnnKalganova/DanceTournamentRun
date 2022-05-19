@@ -386,6 +386,24 @@ namespace DanceTournamentRun.Controllers
             }
             return NotFound();
         }
+
+        [HttpPost] 
+        public async Task<ActionResult> DaletePair(long? pairId)
+        {
+            if (pairId != null)
+            {
+                var pair = _context.Pairs.FirstOrDefault(p => p.Id == pairId);
+                if (pair != null)
+                {
+                    var gr = _context.Groups.Find(pair.GroupId);
+                    _context.Pairs.Remove(pair);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("ViewPairs", new { tournId = gr.TournamentId });
+                }
+            }
+            return NotFound();
+        }
+
         public PartialViewResult ViewReferees(long? tournId)
         {
             if (tournId != null)

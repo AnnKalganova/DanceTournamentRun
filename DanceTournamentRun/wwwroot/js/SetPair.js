@@ -66,3 +66,34 @@ $('#submitEditPair').on('click', function (e) {
     $(".modal-backdrop").remove();
 });
 
+//delete pair 
+var cancelDelGrp = document.getElementById('cancelDelPair');
+
+cancelDelGrp.addEventListener('click', function () {
+    $("#delPairName").text("");
+    $("#delPairId").val("");
+});
+
+$('#dialogDeletePair').on('show.bs.modal', function (event) {
+    var reference_tag = $(event.relatedTarget);
+    var id = reference_tag.data('id');
+    var name = reference_tag.data('name');
+    $("#delPairId").val(id);
+    $("#delPairName").text(name);
+})
+
+$('#submitDelPair').on('click', function (e) {
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: "/Admin/DaletePair",
+        data: $('#delPairForm').serialize(),
+        success: function (data) {
+            $('#pairsTable').html(data);
+        },
+        error: function () {
+            alert('Error');
+        }
+    });
+    $(".modal-backdrop").remove();
+});
