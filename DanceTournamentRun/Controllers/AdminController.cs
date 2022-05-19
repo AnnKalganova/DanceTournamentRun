@@ -561,6 +561,40 @@ namespace DanceTournamentRun.Controllers
             return NotFound();
         }
 
+        [HttpPost]
+        public async Task<ActionResult> EditRegistrator(CreateRegistratorModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                User user = await _context.Users.FirstOrDefaultAsync(u => u.Login == model.Login && u.Id != model.Id);
+                if (user == null)
+                {
+                    User oldUser = _context.Users.Find(model.Id);
+                    oldUser.Login = model.Login;
+                    oldUser.LastName = model.LastName;
+                    oldUser.FirstName = model.FirstName;
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("ViewRegistrators", new { tournId = model.TournamentId });
+                }
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DaleteRegistrator(long? regId, long? tournId)
+        {
+            if (regId != null && tournId != null)
+            {
+                User registrator = _context.Users.Find(regId);
+                UsersTournament tournament = _context.UsersTournaments.First(t => t.UserId == registrator.Id);
+                _context.UsersTournaments.Remove(tournament);
+                _context.SaveChanges();
+                _context.Users.Remove(registrator);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("ViewRegistrators", new { tournId = tournId });
+            }
+            return NotFound();
+        }
         public async Task<ActionResult> RunTourn(long? tournId)
         {
             if(tournId.HasValue)

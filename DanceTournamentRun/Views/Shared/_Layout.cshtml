@@ -6,7 +6,7 @@
     <title>@ViewData["Title"] - Dance Tournaments</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="stylesheet" href="~/css/Groups.css?v=1" />
+    <link rel="stylesheet" href="~/css/Groups.css?v=2" />
     <link href="~/lib/open-iconic-master/font/css/open-iconic-bootstrap.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -14,16 +14,16 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3 bg-gradient">
             <div class="container">
-                <a class="navbar-brand"  style="font-size:30px;" asp-area="" asp-controller="Admin" asp-action="Index">@ViewData["TName"]</a>
+                <a class="navbar-brand"  style="font-size: 30px; color: white;" asp-area="" asp-controller="Admin" asp-action="Index">@ViewData["TName"]</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div>
                     <a class="navbar-brand">@ViewData["Login"]</a>
-                    <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Logout">Выход</a>
+                    <a class="navbar-brand" style="color: white;" asp-area="" asp-controller="Account" asp-action="Logout">Выход</a>
                 </div>
             </div>
         </nav>

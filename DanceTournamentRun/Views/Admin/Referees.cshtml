@@ -4,7 +4,7 @@
     List<RefereeViewModel> referees = ViewBag.referees;
     var serGr = Json.Serialize(groups);
 }
-<div class="d-flex">
+
     <table id="refTable" class="table table-striped col-md-9 table-bordered">
         <thead>
             <tr>
@@ -13,7 +13,11 @@
                 {
                     <th scope="col" class="text-center col-md-1">@group.Name</th>
                 }
-                <th sope="col" class=" col-md-1"></th>
+            <th sope="col" class=" col-md-1">
+                <button type="button" class="btn btn-info  h-25 " data-toggle="modal" data-target="#dialogAddReferee" data-groups=@serGr>
+                    Добавить судью
+                </button>
+            </th>
             </tr>
         </thead>
         <tbody>
@@ -48,10 +52,7 @@
             }
         </tbody>
     </table>
-    <button type="button" class="btn btn-info  h-25 .col-md-3" data-toggle="modal" data-target="#dialogAddReferee" data-groups=@serGr>
-        Добавить судью
-    </button>
-</div>
+
 
 
 <div class="modal fade" id="dialogAddReferee" tabindex="-1" role="dialog" aria-labelledby="dialogAddRefereeCenterTitle" aria-hidden="true">

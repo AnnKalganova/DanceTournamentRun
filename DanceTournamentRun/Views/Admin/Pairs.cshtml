@@ -9,8 +9,6 @@
 }
 
 
-
-<div class="d-flex">
     <table class="table  table-striped col-md-8">
         @* table-borderless *@
         <thead class="table-borderless">
@@ -18,7 +16,11 @@
                 <th scope="col">Группа</th>
                 <th scope="col">Партнер</th>
                 <th scope="col">Партнерша</th>
-                <th scope="col"></th>
+                <th scope="col">
+                    <button type="button" class="btn btn-info  h-25 .col-md-3" data-toggle="modal" data-target="#dialogAddPair" data-groups=@serGr>
+                        Добавить пару
+                    </button>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -56,10 +58,7 @@
             }
         </tbody>
     </table>
-    <button type="button" class="btn btn-info  h-25 .col-md-3" data-toggle="modal" data-target="#dialogAddPair" data-groups=@serGr>
-        Добавить пару
-    </button>
-</div>
+
 
 
 <div class="modal fade" id="dialogAddPair" tabindex="-1" role="dialog" aria-labelledby="dialogAddPairCenterTitle" aria-hidden="true">

@@ -15,5 +15,6 @@ namespace DanceTournamentRun.Models
         [Required(ErrorMessage = "Не указано имя")]
         public string FirstName { get; set; }
         public long TournamentId { get; set; }
+        public long? Id { get; set; } 
     }
 }
