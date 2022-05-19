@@ -14,6 +14,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace DanceTournamentRun.Controllers
 {
@@ -462,6 +463,61 @@ namespace DanceTournamentRun.Controllers
             return NotFound();
         }
 
+        [HttpPost]
+        public async Task<ActionResult> EditReferee(EditRefereeModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var referee = _context.Users.Include(p => p.Role).FirstOrDefault(u=>u.Id == model.Id);
+                if (referee!=null && referee.Role.Name == "referee")
+                {
+                    referee.LastName = model.LastName;
+                    referee.FirstName = model.FirstName;
+                    await _context.SaveChangesAsync();
+
+                    var oldGrId = _context.UsersGroups.Where(r => r.UserId == referee.Id).Select(p => p.GroupId).ToArray();
+                    var grsToAddId = model.GroupsId.Except(oldGrId);
+                    var grsToDelId = oldGrId.Except(model.GroupsId);
+
+                    foreach( var grAddId in grsToAddId)
+                    {
+                        UsersGroup usersGroup = new UsersGroup() { UserId = referee.Id, GroupId = grAddId };
+                        _context.UsersGroups.Add(usersGroup);
+                        await _context.SaveChangesAsync();
+                    }
+                    foreach (var grDelId in grsToDelId)
+                    {
+                        UsersGroup usersGroup = _context.UsersGroups.First(u => u.GroupId == grDelId && u.UserId == referee.Id);
+                        _context.UsersGroups.Remove(usersGroup);
+                        await _context.SaveChangesAsync();
+                    }
+                    return RedirectToAction("ViewReferees", new { tournId = model.TournamentId });
+                }
+
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DaleteReferee(long? refereeId, long? tournId)
+        {
+            if(refereeId!=null && tournId != null)
+            {
+                User referee = _context.Users.Find(refereeId);
+                UsersTournament tournament = _context.UsersTournaments.First(t => t.UserId == referee.Id);
+                var groups = _context.UsersGroups.Where(g => g.UserId == referee.Id);
+                _context.UsersTournaments.Remove(tournament);
+                foreach(var group in groups)
+                {
+                    _context.UsersGroups.Remove(group);
+                }
+                _context.SaveChanges();
+                _context.Users.Remove(referee);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("ViewReferees", new { tournId = tournId });
+            }
+            return NotFound();
+        }
         public PartialViewResult ViewRegistrators(long? tournId)
         {
             if (tournId != null)

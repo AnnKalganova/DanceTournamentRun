@@ -13,6 +13,7 @@
                 {
                     <th scope="col" class="text-center col-md-1">@group.Name</th>
                 }
+                <th sope="col" class=" col-md-1"></th>
             </tr>
         </thead>
         <tbody>
@@ -31,6 +32,18 @@
                             <td></td>
                         }
                     }
+                    <td>
+                        <span class="gr-btn gr-btn-edit" data-toggle="modal" data-target="#dialogEditReferee"
+                              data-id="@referee.Id" data-lastName="@referee.LastName" data-firstName="@referee.FirstName"
+                              data-groups=@serGr data-refGroupsId=@Json.Serialize(referee.GroupsId)>
+                            <span class="oi oi-pencil" title="Изменить" aria-hidden="true"></span>
+                        </span>
+
+                        <span class="gr-btn gr-btn-del" data-toggle="modal" data-target="#dialogDeleteReferee"
+                        data-id="@referee.Id" data-name="@referee.LastName @referee.FirstName">
+                           <span class="oi oi-trash" title="Удалить" aria-hidden="true"></span>
+                        </span>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -54,7 +67,7 @@
             <div class="modal-body">
                 <form id="addRefereeForm" asp-anti-forgery="true">
                     <div class="validation" asp-validation-summary="ModelOnly"></div>
-                    <input type="hidden" id="postId" name="TournamentId" value="@ViewBag.tournamentId">
+                    <input type="hidden" name="TournamentId" value="@ViewBag.tournamentId">
                     <div>
                         <div class="form-group">
                             <label asp-for="Login">Логин</label>
@@ -87,5 +100,64 @@
     </div>
 </div>
 
+<div class="modal fade" id="dialogEditReferee" tabindex="-1" role="dialog" aria-labelledby="dialogEditRefereeCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dialogEditRefereeCenterTitle">Редактирование судьи</h5>
+                <button id="closeEditReferee" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
 
+            <div class="modal-body">
+                <form id="editRefereeForm" asp-anti-forgery="true">
+                    <div class="validation" asp-validation-summary="ModelOnly"></div>
+                    <input type="hidden" name="TournamentId" value="@ViewBag.tournamentId">
+                    <input type="hidden" name="Id" value="" />
+                    <div>
+                        <div class="form-group">
+                            <label asp-for="LastName" class="col-form-label">Фамилия</label>
+                            <input type="text" asp-for="LastName" class="form-control" autocomplete="on" placeholder="Введите фамилию" />
+                            <span asp-validation-for="LastName" />
+                            <label asp-for="FirstName" class="col-form-label">Имя</label>
+                            <input type="text" asp-for="FirstName" class="form-control" autocomplete="on" placeholder="Введите имя" />
+                            <span asp-validation-for="FirstName" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="GroupsId" class="col-form-label">Группы</label>
+                            <select class="selectpicker" multiple data-live-search="false" id="refGroupSelect" asp-for="GroupsId">
+                            </select>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelEditReferee" type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button id="submitEditReferee" type="submit" form="editRefereeForm" class="btn btn-primary" data-dismiss="modal">Сохранить</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="dialogDeleteReferee" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form id="delRefereeForm" asp-anti-forgery="true">
+                    <input type="hidden" name="tournId" value="@ViewBag.tournamentId"/>
+                    <input id="delRefereeId" type="hidden" name="refereeId" value="">
+                    <label class="col-form-label"> Вы уверены, что хотите удалить судью <strong><span id="delRefereeName"> </span></strong>?</label>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelDelReferee" type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button id="submitDelReferee" type="submit" form="delPairForm" class="btn btn-primary" data-dismiss="modal">Удалить</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="~/js/SetReferee.js" asp-append-version="true"></script>
