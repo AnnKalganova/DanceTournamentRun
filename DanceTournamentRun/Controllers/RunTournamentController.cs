@@ -1,6 +1,7 @@
 ﻿using DanceTournamentRun.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using QRCoder;
 using System;
@@ -17,10 +18,12 @@ namespace DanceTournamentRun.Controllers
     public class RunTournamentController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public RunTournamentController(ApplicationDbContext context)
+        public RunTournamentController(ApplicationDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
         public IActionResult Index()
         {
@@ -73,7 +76,8 @@ namespace DanceTournamentRun.Controllers
                 List<RegViewModel> regViews = new List<RegViewModel>();
                 foreach (var reg in registrators)
                 {
-                    var link = "http://192.168.1.14:41837/api/Registration/" + reg.SecurityToken;
+                    var link = _configuration["IpForQR"];
+                    link += "Registration/" + reg.SecurityToken;
                     QRCodeGenerator qrGenerator = new QRCodeGenerator();
                     QRCodeData qrCodeData = qrGenerator.CreateQrCode(link, QRCodeGenerator.ECCLevel.Q);
                     QRCode qrCode = new QRCode(qrCodeData);
@@ -102,7 +106,8 @@ namespace DanceTournamentRun.Controllers
                 List<RegViewModel> refViews = new List<RegViewModel>();
                 foreach (var referee in referees)
                 {
-                    var link = "http://192.168.1.14:41837/api/Referee/" + referee.SecurityToken;
+                    var link = _configuration["IpForQR"];
+                    link += "Referee/" + referee.SecurityToken;
                     QRCodeGenerator qrGenerator = new QRCodeGenerator();
                     QRCodeData qrCodeData = qrGenerator.CreateQrCode(link, QRCodeGenerator.ECCLevel.Q);
                     QRCode qrCode = new QRCode(qrCodeData);

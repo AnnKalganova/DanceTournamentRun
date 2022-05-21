@@ -72,9 +72,9 @@ go
 --go
 
 
---Version from 17.05 12:18 
+--Version from 21.05 Пересоздай процедуру 
 CREATE PROCEDURE GetGroupsByToken
-	@token nvarchar
+	@token nvarchar(50)
 	AS
 BEGIN
 	SELECT gr.Id, gr.isCompetitionOn, gr.isRegistrationOn, gr.Name, gr.Number, gr.TournamentId
@@ -85,7 +85,7 @@ BEGIN
 END;
 go
 
---EXEC GetGroupsByToken 20004;
+--EXEC GetGroupsByToken '66df9633-a860-49f0-a547-9378655e385b';
 
 --Drop PROCEDURE GetGroupsByToken;
 --go
@@ -112,3 +112,20 @@ go
 --go
 
 
+-- Version from 21.05
+CREATE PROCEDURE isUserHasAccessToGroup
+ @groupId bigint,@token nvarchar(50), @result int OUTPUT
+	AS
+	SELECT @result =COUNT(usGr.Id)
+	FROM UsersGroups as usGr
+	Join Users as u ON u.Id = usGr.UserId
+	Where u.SecurityToken = @token and usGr.GroupId = @groupId
+go
+
+
+--DECLARE @res int;
+--EXEC isUserHasAccessToGroup 3, '66df9633-a860-49f0-a547-9378655e385b', @res OUTPUT
+--PRINT N'результат ' + CONVERT(VARCHAR, @res)
+--go
+
+--Drop PROCEDURE isUserHasAccessToGroup;

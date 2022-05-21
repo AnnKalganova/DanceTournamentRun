@@ -56,6 +56,22 @@ namespace DanceTournamentRun.ApiControllers
             return groups;
         }
 
+        [HttpGet("pairs/{grId}")]
+        public async Task<ActionResult<IEnumerable<Pair>>> GetPairsByGroup(string token, long grId)
+        {
+            int access;
+            using (ApplicationDbContext db = new ApplicationDbContext())
+            {
+                access = db.isUserHasAccessToGroup(grId, token);
+            }
+            if (access != 0)
+            {
+                var pairs = await _context.Pairs.Where(x => x.GroupId == grId).ToListAsync();
+                return pairs;
+            }
+            return NotFound();
+        }
+
         // GET: api/Registration/groupsByDept/3
         // get groups by department's id
         //[HttpGet("groupsByDept/{deptId}")]
@@ -69,15 +85,7 @@ namespace DanceTournamentRun.ApiControllers
 
         // GET: api/Registration/pairsByGroup/5
         //get pairs by group's id 
-        [HttpGet("pairsByGroup/{grId}")]
-        public async Task<ActionResult<IEnumerable<Pair>>> GetPairsByGroup(long grId)
-        {
-            var pairs = await _context.Pairs.Where(x => x.GroupId == grId).ToListAsync();
 
-            if (pairs.Count() == 0)
-                return NotFound();
-            return pairs;
-        }
 
         // GET: api/Registration/2
         [HttpGet("pair/{Id}")]

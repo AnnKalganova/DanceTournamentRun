@@ -25,16 +25,15 @@ namespace DanceTournamentRun.ApiControllers
         //GET: api/Referee/{token}
         //get user name
         [HttpGet]
-        public ActionResult<string> GetUserInfo(string token)
+        public ActionResult<UserInfoModel> GetUserInfo(string token)
         {
             User user = _context.Users.FirstOrDefault(u => u.SecurityToken == token);
             if (user != null)
             {
-                return user.LastName + " " + user.FirstName;
+                return new UserInfoModel() { LastName = user.LastName, FirstName = user.FirstName };
             }
             return NotFound();
         }
-
 
         //GET: api/Referee/{token}/groups
         //get groups by token
@@ -50,6 +49,22 @@ namespace DanceTournamentRun.ApiControllers
             if (groups.Count() == 0)
                 return NotFound();
             return groups;
+        }
+
+        [HttpGet("pairs/{grId}")]
+        public async Task<ActionResult<IEnumerable<Pair>>> GetPairsByGroup(string token, long grId)
+        {
+            int access;
+            using (ApplicationDbContext db = new ApplicationDbContext())
+            {
+                access = db.isUserHasAccessToGroup(grId, token);
+            }
+            if (access != 0)
+            {
+                var pairs = await _context.Pairs.Where(x => x.GroupId == grId).ToListAsync();
+                return pairs;
+            }
+            return NotFound();
         }
 
     }

@@ -71,21 +71,28 @@ namespace DanceTournamentRun.Models
 
         public List<Group> GetGroupsByToken(string token)
         {
-            SqlParameter param = new SqlParameter("@token", token);
+            SqlParameter param = new SqlParameter { ParameterName = "@token", Value = token, SqlDbType = System.Data.SqlDbType.NVarChar, Size = 50 };
             var groups = Groups.FromSqlRaw("EXEC GetGroupsByToken @token", param).ToList();
             return groups;
         }
 
         public int FindSimilarPartner(long grId, string lastName, string firstName)
         {
-            SqlParameter grIdParam = new SqlParameter("@groupId", grId);
-            //SqlParameter lNameParam = new SqlParameter{ ParameterName = "@lastName", Value = "N'" + lastName + "'" , SqlDbType = System.Data.SqlDbType.NVarChar, Size = 40};
-            //SqlParameter FNameParam = new SqlParameter{ ParameterName = "@firstName", Value = "N'" + firstName + "'", SqlDbType = System.Data.SqlDbType.NVarChar, Size = 40 };
+            SqlParameter grIdParam = new SqlParameter("@groupId", grId); 
             SqlParameter lNameParam = new SqlParameter { ParameterName = "@lastName", Value = lastName, SqlDbType = System.Data.SqlDbType.NVarChar, Size = 40 };
             SqlParameter FNameParam = new SqlParameter { ParameterName = "@firstName", Value = firstName, SqlDbType = System.Data.SqlDbType.NVarChar, Size = 40 };
             SqlParameter countParam = new SqlParameter { ParameterName = "@count", SqlDbType = System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output };
             Database.ExecuteSqlRaw("FindSimilarPartner @groupId, @lastName, @firstName, @count OUT", grIdParam, lNameParam, FNameParam, countParam);
             return (int)countParam.Value;
+        }
+
+        public int isUserHasAccessToGroup(long grId, string token)
+        {
+            SqlParameter grIdParam = new SqlParameter("@groupId", grId);
+            SqlParameter tokenParam = new SqlParameter { ParameterName = "@token", Value = token, SqlDbType = System.Data.SqlDbType.NVarChar, Size = 50 };
+            SqlParameter resultParam = new SqlParameter { ParameterName = "@result", SqlDbType = System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output };
+            Database.ExecuteSqlRaw("isUserHasAccessToGroup @groupId, @token, @result OUT", grIdParam, tokenParam, resultParam);
+            return (int)resultParam.Value;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
