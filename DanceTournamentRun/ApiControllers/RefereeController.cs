@@ -57,7 +57,7 @@ namespace DanceTournamentRun.ApiControllers
             int access;
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
-                access = db.isUserHasAccessToGroup(grId, token);
+                access = db.IsAccessToGroupGranted(grId, token);
             }
             if (access != 0)
             {

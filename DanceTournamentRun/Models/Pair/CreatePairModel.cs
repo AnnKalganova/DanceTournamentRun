@@ -19,6 +19,8 @@ namespace DanceTournamentRun.Models
         [Required(ErrorMessage = "Не указана фамилия")]
         public string Partner2LastName { get; set; }
 
+        public int? Number { get; set; }
+
         public long TournamentId { get; set; }
     }
 }

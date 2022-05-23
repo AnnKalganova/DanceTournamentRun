@@ -127,7 +127,7 @@ $("#dialogEditGroup").on('show.bs.modal', function (e) {
 });
 
 $("#dialogEditGroup").on('hidden.bs.modal', function (e) {
-    $(".entry:not(:last)").each(function () {
+    $(".entry:not(:first)").each(function () {
         $(this).remove();
     });
 

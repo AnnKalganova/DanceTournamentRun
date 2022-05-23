@@ -86,12 +86,12 @@ namespace DanceTournamentRun.Models
             return (int)countParam.Value;
         }
 
-        public int isUserHasAccessToGroup(long grId, string token)
+        public int IsAccessToGroupGranted(long grId, string token)
         {
             SqlParameter grIdParam = new SqlParameter("@groupId", grId);
             SqlParameter tokenParam = new SqlParameter { ParameterName = "@token", Value = token, SqlDbType = System.Data.SqlDbType.NVarChar, Size = 50 };
             SqlParameter resultParam = new SqlParameter { ParameterName = "@result", SqlDbType = System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output };
-            Database.ExecuteSqlRaw("isUserHasAccessToGroup @groupId, @token, @result OUT", grIdParam, tokenParam, resultParam);
+            Database.ExecuteSqlRaw("IsAccessToGroupGranted @groupId, @token, @result OUT", grIdParam, tokenParam, resultParam);
             return (int)resultParam.Value;
         }
 

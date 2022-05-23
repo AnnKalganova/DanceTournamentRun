@@ -112,8 +112,8 @@ go
 --go
 
 
--- Version from 21.05
-CREATE PROCEDURE isUserHasAccessToGroup
+-- Version from 23.05 
+CREATE PROCEDURE IsAccessToGroupGranted
  @groupId bigint,@token nvarchar(50), @result int OUTPUT
 	AS
 	SELECT @result =COUNT(usGr.Id)
@@ -124,8 +124,8 @@ go
 
 
 --DECLARE @res int;
---EXEC isUserHasAccessToGroup 3, '66df9633-a860-49f0-a547-9378655e385b', @res OUTPUT
+--EXEC IsAccessToGroupGranted 3, '66df9633-a860-49f0-a547-9378655e385b', @res OUTPUT
 --PRINT N'результат ' + CONVERT(VARCHAR, @res)
 --go
 
---Drop PROCEDURE isUserHasAccessToGroup;
+--Drop PROCEDURE IsAccessToGroupGranted;

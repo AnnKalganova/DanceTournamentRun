@@ -40,7 +40,6 @@ namespace DanceTournamentRun.ApiControllers
             return NotFound();
         }
 
-
         //GET: api/Registration/{token}/groups
         //get groups by token
         [HttpGet("groups")]
@@ -56,13 +55,15 @@ namespace DanceTournamentRun.ApiControllers
             return groups;
         }
 
+        //GET: api/Registration/{token}/pairs/{grId}
+        //get pairs by group with token verification
         [HttpGet("pairs/{grId}")]
         public async Task<ActionResult<IEnumerable<Pair>>> GetPairsByGroup(string token, long grId)
         {
             int access;
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
-                access = db.isUserHasAccessToGroup(grId, token);
+                access = db.IsAccessToGroupGranted(grId, token);
             }
             if (access != 0)
             {
@@ -72,26 +73,81 @@ namespace DanceTournamentRun.ApiControllers
             return NotFound();
         }
 
-        // GET: api/Registration/groupsByDept/3
-        // get groups by department's id
-        //[HttpGet("groupsByDept/{deptId}")]
-        //public async Task<ActionResult<IEnumerable<Group>>> GetGroupsByDepartment(long deptId)
-        //{
-        //    var groups = await _context.Groups.Where(x => x.DepartmentId == deptId).ToListAsync();
-        //    if (groups.Count() == 0)
-        //        return NotFound();
-        //    return groups;
-        //}
+        //POST: api/Registration/{token}/updatePair/{pair}
+        //update pair by pair object with token verification
+        [HttpPost("updatePair")]
+        public async Task<IActionResult> UpdatePair(string token,[FromBody] Pair pair)
+        {
+            int access;
+            using (ApplicationDbContext db = new ApplicationDbContext())
+            {
+                access = db.IsAccessToGroupGranted(pair.GroupId, token);
+            }
+            //TODO проверка на то что такая пара есть или номер есть
+            var oldPair = _context.Pairs.FirstOrDefault(p => p.Id == pair.Id);
+            if (oldPair == null || access == 0)
+            {
+                return NotFound();
+            }
+            oldPair = pair;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
 
-        // GET: api/Registration/pairsByGroup/5
-        //get pairs by group's id 
+        //POST:api/Registration/{token}/createPair
+        // create pair by pair object from body with token verification
+        [HttpPost("createPair")]
+        public async Task<IActionResult> CreatePair(string token,[FromBody] CreatePairModel pair)
+        {
+            int access;
+            using (ApplicationDbContext db = new ApplicationDbContext())
+            {
+                access = db.IsAccessToGroupGranted(pair.GroupId, token);
+            }
+            if (access == 0)
+            {
+                return NotFound();
+            }
+            //TODO проверка на то что такая пара\номер уже есть
+            Pair newPair = new Pair()
+            {
+                GroupId = pair.GroupId,
+                Partner1LastName = pair.Partner1LastName,
+                Partner1FirstName = pair.Partner1FirstName,
+                Partner2LastName = pair.Partner2LastName,
+                Partner2FirstName = pair.Partner2FirstName,
+                Number = pair.Number
+            };
+            _context.Pairs.Add(newPair);
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        // POST: api/Registration/{token}/deletePair/{pairId}/{groupId}
+        //delete pair by id with token verification
+        [HttpPost("deletePair/{pairId}/{groupId}")]
+        public async Task<IActionResult> DeletePair(string token, long pairId, long groupId)
+        {
+            int access;
+            using (ApplicationDbContext db = new ApplicationDbContext())
+            {
+                access = db.IsAccessToGroupGranted(groupId, token);
+            }
+            var pair = _context.Pairs.Find(pairId);
+            if (pair == null || access == 0)
+            {
+                return NotFound();
+            }
+            _context.Pairs.Remove(pair);
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
 
 
         // GET: api/Registration/2
         [HttpGet("pair/{Id}")]
         public async Task<ActionResult<Pair>> GetPair(long Id)
         {
-
             var pair = await _context.Pairs.FindAsync(Id);
             if (pair == null)
             {
@@ -99,91 +155,6 @@ namespace DanceTournamentRun.ApiControllers
             }
             return pair;
         }
-
-        // POST: api/Registration
-        //[HttpPost]
-        //public async Task<ActionResult<Pair>> CreatePair(Pair pair)
-        //{
-        //    _context.Pairs.Add(pair);
-        //    await _context.SaveChangesAsync();
-
-        //    return CreatedAtAction("GetPair", new { id = pair.Id }, pair);
-        //}
-
-        // PUT: api/Registration/5/3
-        [HttpPut("{id}/{number}")]
-        public async Task<IActionResult> EditPairInfo(long id, int number)
-        {
-            var pair = await _context.Pairs.FindAsync(id);
-            if (pair == null)
-            {
-                return NotFound();
-            }
-            pair.Number = number;
-            _context.Entry(pair).State = EntityState.Modified;
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PairExists(id))
-                {
-                    return NotFound();
-                }
-                else { throw; }
-            }
-            return NoContent();
-        }
-
-        // PUT: api/Registration/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> EditPairInfo(long id, Pair pair)
-        {
-            if (id != pair.Id)
-            {
-                return BadRequest();
-            }
-            _context.Entry(pair).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PairExists(id))
-                {
-                    return NotFound();
-                }
-                else { throw; }
-            }
-            return NoContent();
-        }
-
-        // DELETE: api/Registration/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePair(long id)
-        {
-            var pair = await _context.Pairs.FindAsync(id);
-            if (pair == null)
-            {
-                return NotFound();
-            }
-
-            _context.Pairs.Remove(pair);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-        
-
-        private bool PairExists(long id)
-        {
-            return _context.Pairs.Any(e => e.Id == id);
-        }
-
-
 
     }
 }
