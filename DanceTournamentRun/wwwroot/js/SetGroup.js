@@ -28,27 +28,27 @@ $('#submitAddGrp').on('click', function (e) {
     $(".modal-backdrop").remove();
 });
 
-$(document).on('click', '.btn-add.addGr', function (event) {
+$(document).on('click', '.btn-add', function (event) {
     event.preventDefault();
-    var controlForm = $('.controls.addGr');
-    var currentEntry = $(this).parents('.entry:first');
+    var controlForm = $('.controls-add');
+    var currentEntry = $(this).parents('.entry-add:first');
     var newEntry = $(currentEntry.clone()).appendTo(controlForm);
     newEntry.find('input').val('');
-    controlForm.find('.entry:not(:last) .btn-add.addGr')
+    controlForm.find('.entry-add:not(:last) .btn-add')
         .removeClass('btn-add').addClass('btn-remove')
         .removeClass('btn-success').addClass('btn-danger')
         .html('<span class="oi oi-minus" title="icon name" aria-hidden="true"></span>');
 
-    var inputs = $('.controls.addGr .form-control.addGr');
+    var inputs = $('.controls-add .form-control-add');
     $.each(inputs, function (index, item) {
         item.name = 'Dances[' + index + ']';
     });
 });
 
-$(document).on('click', '.btn-remove.addGr', function (event) {
+$(document).on('click', '.btn-remove', function (event) {
     event.preventDefault();
-    $(this).parents('.entry:first').remove();
-    var inputs = $('.controls.addGr .form-control.addGr');
+    $(this).parents('.entry-add:first').remove();
+    var inputs = $('.controls-add .form-control-add');
     $.each(inputs, function (index, item) {
         item.name = 'Dances[' + index + ']';
     });
@@ -107,15 +107,15 @@ $("#dialogEditGroup").on('show.bs.modal', function (e) {
 
         if (dancesObj.length >= 2) {
             for (var i = 1; i < dancesObj.length; i++) {
-                var controlForm = $('.controls.editGr');
-                var currentEntry = $('.form-control.editGr').parents('.entry:first');
+                var controlForm = $('.controls-edit');
+                var currentEntry = $('.form-control-edit').parents('.entry-edit:first');
                 var newEntry = $(currentEntry.clone()).appendTo(controlForm);
                 newEntry.find('input').val(dancesObj[i].Name);
-                controlForm.find('.entry:not(:last) .btn-add.editGr')
-                    .removeClass('btn-add').addClass('btn-remove')
+                controlForm.find('.entry-edit:not(:last) .btn-addE')
+                    .removeClass('btn-addE').addClass('btn-removeE')
                     .removeClass('btn-success').addClass('btn-danger')
                     .html('<span class="oi oi-minus" title="icon name" aria-hidden="true"></span>');
-                var inputs = $('.controls.editGr #grEditInput');
+                var inputs = $('.controls-edit .form-control-edit');
                 $.each(inputs, function (index, item) {
                     item.name = 'Dances[' + index + ']';
                 });
@@ -127,11 +127,11 @@ $("#dialogEditGroup").on('show.bs.modal', function (e) {
 });
 
 $("#dialogEditGroup").on('hidden.bs.modal', function (e) {
-    $(".entry:not(:first)").each(function () {
+    $(".entry-edit:not(:last)").each(function () {
         $(this).remove();
     });
 
-    var inputs = $('.controls.editGr #grEditInput');
+    var inputs = $('.controls-edit .form-control-edit');
     $.each(inputs, function (index, item) {
         item.name = 'Dances[' + index + ']';
     });
@@ -156,27 +156,27 @@ $('#submitEditGrp').on('click', function (e) {
     $(".modal-backdrop").remove();
 });
 
-$(document).on('click', '.btn-add.editGr', function (event) {
+$(document).on('click', '.btn-addE', function (event) {
     event.preventDefault();
-    var controlForm = $('.controls.editGr');
-    var currentEntry = $(this).parents('.entry:first');
+    var controlForm = $('.controls-edit');
+    var currentEntry = $(this).parents('.entry-edit:first');
     var newEntry = $(currentEntry.clone()).appendTo(controlForm);
     newEntry.find('input').val('');
-    controlForm.find('.entry:not(:last) .btn-add.editGr')
-        .removeClass('btn-add').addClass('btn-remove')
+    controlForm.find('.entry-edit:not(:last) .btn-addE')
+        .removeClass('btn-addE').addClass('btn-removeE')
         .removeClass('btn-success').addClass('btn-danger')
         .html('<span class="oi oi-minus" title="icon name" aria-hidden="true"></span>');
 
-    var inputs = $('.controls.editGr #grEditInput');
+    var inputs = $('.controls-edit .form-control-edit');
     $.each(inputs, function (index, item) {
         item.name = 'Dances[' + index + ']';
     });
 });
 
-$(document).on('click', '.btn-remove.editGr', function (event) {
+$(document).on('click', '.btn-removeE', function (event) {
     event.preventDefault();
-    $(this).parents('.entry:first').remove();
-    var inputs = $('.controls.editGr #grEditInput');
+    $(this).parents('.entry-edit:first').remove();
+    var inputs = $('.controls-edit .form-control-edit');
     $.each(inputs, function (index, item) {
         item.name = 'Dances[' + index + ']';
     });

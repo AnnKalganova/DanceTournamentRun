@@ -131,6 +131,14 @@ namespace DanceTournamentRun.Controllers
             }
         }
 
+       
+        public ActionResult UpdateRegProgress()
+        {
+            string text = "Пошел процесс";
+            ViewBag.text = text;
+            PartialView("RegistrationProgress");
+            return Ok();
+        }
     }
 }
 

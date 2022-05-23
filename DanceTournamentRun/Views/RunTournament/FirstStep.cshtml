@@ -2,13 +2,19 @@
 @model Tournament 
 <div class="m-3">
     <h2>Шаг 1</h2>
-    <div class="row m-0">
-        <a  asp-action="GetRegQR" asp-controller="RunTournament" asp-route-tournId=@Model.Id target="_blank" type="button" class="btn btn-info rounded-pill rn-btn mr-2">QR организаторов</a>
-        <a  asp-action="GetRefereeQR" asp-controller="RunTournament" asp-route-tournId=@Model.Id  target="_blank" class="btn btn-info rounded-pill rn-btn">QR судей</a>
+    <div>
+        @Html.Partial("RegistrationProgress")
     </div>
-    Процесс регистрации
+    <div class=" m-0 d-flex">
+        <div>
+            <a asp-action="GetRegQR" asp-controller="RunTournament" asp-route-tournId=@Model.Id target="_blank" type="button" class="btn btn-info rounded-pill rn-btn mr-2">QR организаторов</a>
+            <a asp-action="GetRefereeQR" asp-controller="RunTournament" asp-route-tournId=@Model.Id target="_blank" class="btn btn-info rounded-pill rn-btn">QR судей</a>
+        </div>
+        <button id="goStep2" type="button" class="btn btn-info rounded-pill rn-btn m-3"><span class="oi oi-chevron-right" aria-hidden="true"></span> Шаг 2</button>
 
-    <button id="goStep2" type="button" class="btn btn-info rounded-pill rn-btn m-3"><span class="oi oi-chevron-right" aria-hidden="true"></span> Шаг 2</button>
+    </div>
+    
+
 
 
 </div>

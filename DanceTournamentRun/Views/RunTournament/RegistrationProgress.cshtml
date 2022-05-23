@@ -1,0 +1,13 @@
+﻿@{
+    string text = ViewBag.text;
+}
+
+@if (text == null)
+{
+    <div>Загрузка...</div>
+}
+else
+{
+    <div>@text</div>
+}
+            
