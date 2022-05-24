@@ -146,14 +146,20 @@ namespace DanceTournamentRun.ApiControllers
         [HttpGet("complete")]
         public async Task<ActionResult> CompleteRegistration(string token)
         {
-            //List<Group> groups = new List<Group>();
-            //using (ApplicationDbContext db = new ApplicationDbContext())
-            //{
-            //    groups = db.GetGroupsByToken(token);
-            //}
-            //if (groups.Count() == 0)
-            //    return NotFound();
-            return RedirectToAction("UpdateRegProgress", "RunTournament");
+            List<Group> groups = new List<Group>();
+            using (ApplicationDbContext db = new ApplicationDbContext())
+            {
+                groups = db.GetGroupsByToken(token);
+            }
+            if (groups.Count() == 0)
+                return NotFound();
+            foreach(var gr in groups)
+            {
+                var currGr = _context.Groups.Find(gr.Id);
+                currGr.IsRegistrationOn = false;
+                await _context.SaveChangesAsync();
+            }
+            return Ok();
         }
 
         // GET: api/Registration/2
