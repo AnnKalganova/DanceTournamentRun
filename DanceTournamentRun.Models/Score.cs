@@ -5,12 +5,14 @@ using System.Collections.Generic;
 
 namespace DanceTournamentRun.Models
 {
-    public partial class Heat
+    public partial class Score
     {
         public long Id { get; set; }
+        public long ProgressId { get; set; }
         public long PairId { get; set; }
-        public int Heat1 { get; set; }
+        public int? Score1 { get; set; }
 
+        public virtual RefereeProgress RefereeProgress { get; set; }
         public virtual Pair Pair { get; set; }
     }
 }

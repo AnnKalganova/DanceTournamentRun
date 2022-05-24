@@ -10,8 +10,7 @@ namespace DanceTournamentRun.Models
     {
         public Pair()
         {
-            Heats = new HashSet<Heat>();
-            Points = new HashSet<Point>();
+            Scores = new HashSet<Score>();
             Results = new HashSet<Result>();
         }
 
@@ -33,8 +32,7 @@ namespace DanceTournamentRun.Models
         public int? Number { get; set; }
 
         public virtual Group Group { get; set; }
-        public virtual ICollection<Heat> Heats { get; set; }
-        public virtual ICollection<Point> Points { get; set; }
+        public virtual ICollection<Score> Scores { get; set; }
         public virtual ICollection<Result> Results { get; set; }
     }
 }

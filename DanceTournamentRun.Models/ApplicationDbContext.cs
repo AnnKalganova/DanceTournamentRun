@@ -25,16 +25,15 @@ namespace DanceTournamentRun.Models
         public virtual DbSet<Dance> Dances { get; set; }
         public virtual DbSet<Group> Groups { get; set; }
         public virtual DbSet<GroupsDance> GroupsDances { get; set; }
-        public virtual DbSet<Heat> Heats { get; set; }
         public virtual DbSet<Pair> Pairs { get; set; }
-        public virtual DbSet<Point> Points { get; set; }
         public virtual DbSet<Result> Results { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<Tournament> Tournaments { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UsersGroup> UsersGroups { get; set; }
         public virtual DbSet<UsersTournament> UsersTournaments { get; set; }
-
+        public virtual DbSet<Score> Scores { get; set; }
+        public virtual DbSet<RefereeProgress> RefereeProgresses { get; set; }
         public ICollection<Group> GetGroups(long tournId)
         {
             //TODO: заменить на функции внутри бд
@@ -154,15 +153,6 @@ namespace DanceTournamentRun.Models
                     .HasConstraintName("FK_dbo.GroupsDances_dbo.Groups_GroupId");
             });
 
-            modelBuilder.Entity<Heat>(entity =>
-            {
-                entity.Property(e => e.Heat1).HasColumnName("Heat");
-
-                entity.HasOne(d => d.Pair)
-                    .WithMany(p => p.Heats)
-                    .HasForeignKey(d => d.PairId)
-                    .HasConstraintName("FK_dbo.Heats_dbo.Pairs_PairId");
-            });
 
             modelBuilder.Entity<Pair>(entity =>
             {
@@ -170,27 +160,6 @@ namespace DanceTournamentRun.Models
                     .WithMany(p => p.Pairs)
                     .HasForeignKey(d => d.GroupId)
                     .HasConstraintName("FK_dbo.Pairs_dbo.Groups_GroupId");
-            });
-
-            modelBuilder.Entity<Point>(entity =>
-            {
-                entity.Property(e => e.Point1).HasColumnName("Point");
-
-                entity.HasOne(d => d.Dance)
-                    .WithMany(p => p.Points)
-                    .HasForeignKey(d => d.DanceId)
-                    .HasConstraintName("FK_dbo.Points_dbo.Dances_DanceId");
-
-                entity.HasOne(d => d.Pair)
-                    .WithMany(p => p.Points)
-                    .HasForeignKey(d => d.PairId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_dbo.Points_dbo.Pairs_PairId");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.Points)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK_dbo.Points_dbo.Users_UserId");
             });
 
             modelBuilder.Entity<Result>(entity =>
@@ -232,8 +201,6 @@ namespace DanceTournamentRun.Models
                     .WithMany(p => p.Tournaments)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_Tournament_User");
-
-                
 
             });
 
@@ -287,6 +254,41 @@ namespace DanceTournamentRun.Models
                     .HasForeignKey(d => d.TournamentId)
                     .HasConstraintName("[FK_dbo.UsersTournaments_dbo.Tournaments_TournamentId]");
             });
+
+            modelBuilder.Entity<Score>(entity =>
+            {
+                entity.Property(e => e.Score1).HasColumnName("Score");
+
+                entity.HasOne(d => d.RefereeProgress)
+                    .WithMany(p => p.Score)
+                    .HasForeignKey(d => d.ProgressId)
+                    .HasConstraintName("FK_dbo.Scores_dbo.RefereeProgress_ProgressId");
+
+                entity.HasOne(d => d.Pair)
+                    .WithMany(p => p.Scores)
+                    .HasForeignKey(d => d.PairId)
+                    .HasConstraintName("FK_dbo.Scores_dbo.Pairs_PairId");
+            });
+
+            modelBuilder.Entity<RefereeProgress>(entity =>
+            {
+                entity.ToTable("RefereeProgress");
+
+                entity.Property(e => e.IsCompleted)
+                    .HasColumnName("isCompleted")
+                    .HasDefaultValueSql("((0))");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.RefereeProgress)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_dbo.RefereeProgress_dbo.Users_UserId");
+
+                entity.HasOne(d => d.Dance)
+                    .WithMany(p => p.RefereeProgress)
+                    .HasForeignKey(d => d.DanceId)
+                    .HasConstraintName("FK_dbo.RefereeProgress_dbo.Dances_DanceId");
+            });
+
             OnModelCreatingPartial(modelBuilder);
         }
 

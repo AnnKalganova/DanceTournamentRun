@@ -10,13 +10,13 @@ namespace DanceTournamentRun.Models
         public Dance()
         {
             GroupsDances = new HashSet<GroupsDance>();
-            Points = new HashSet<Point>();
+            RefereeProgress = new HashSet<RefereeProgress>();
         }
 
         public long Id { get; set; }
         public string Name { get; set; }
 
         public virtual ICollection<GroupsDance> GroupsDances { get; set; }
-        public virtual ICollection<Point> Points { get; set; }
+        public virtual ICollection<RefereeProgress> RefereeProgress { get; set; }
     }
 }

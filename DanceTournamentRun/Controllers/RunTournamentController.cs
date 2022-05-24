@@ -52,7 +52,7 @@ namespace DanceTournamentRun.Controllers
                 }
                 else if (!(bool)tourn.IsSecondStepOver)
                 {
-                    return PartialView("SecondStep");
+                    return PartialView("SecondStep", tourn);
                 }
                 else
                 {
@@ -138,6 +138,19 @@ namespace DanceTournamentRun.Controllers
                 {
                     tournId = Id
                 });
+        }
+
+        public async Task<ActionResult> GoToStepTwo(long? tournId)
+        {
+            if (tournId.HasValue)
+            {
+                var tourn = _context.Tournaments.Find(tournId);
+                tourn.IsFirstStepOver = true;
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index", "RunTournament");
+            }
+            return NotFound();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace DanceTournamentRun.Models
     {
         public User()
         {
-            Points = new HashSet<Point>();
+            RefereeProgress = new HashSet<RefereeProgress>();
             Tournaments = new HashSet<Tournament>();
             UsersGroups = new HashSet<UsersGroup>();
             UsersTournaments = new HashSet<UsersTournament>();
@@ -23,7 +23,7 @@ namespace DanceTournamentRun.Models
         public string SecurityToken { get; set; }
 
         public virtual Role Role { get; set; }
-        public virtual ICollection<Point> Points { get; set; }
+        public virtual ICollection<RefereeProgress> RefereeProgress { get; set; }
         public virtual ICollection<Tournament> Tournaments { get; set; }
         public virtual ICollection<UsersGroup> UsersGroups { get; set; }
         public virtual ICollection<UsersTournament> UsersTournaments { get; set; }
