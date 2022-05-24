@@ -2,10 +2,10 @@
     var groups = e.relatedTarget.dataset.groups;
     var groupsObj = JSON.parse(groups);
     console.log(groupsObj);
-    $('#groupSelect').append('<option value="' + groupsObj[0].id + '">' + groupsObj[0].name + '</option>');
+    $('#groupSelect').append('<option value="' + groupsObj[0].id + '">' + groupsObj[0].name.replace("_", " ") + '</option>');
 
     for (var i = 1; i < groupsObj.length; i++) {
-        $('#groupSelect').append('<option value="' + groupsObj[i].id + '">' + groupsObj[i].name + '</option>');
+        $('#groupSelect').append('<option value="' + groupsObj[i].id + '">' + groupsObj[i].name.replace("_", " ") + '</option>');
     }
 });
 
@@ -96,4 +96,19 @@ $('#submitDelPair').on('click', function (e) {
         }
     });
     $(".modal-backdrop").remove();
+});
+
+//change plus on minus
+$(document).on('click', '.btn-open', function (event) {
+    event.preventDefault();
+    var controlForm = $('.controls-open');
+    controlForm.find('.entry-add:not(:last) .btn-add')
+        .removeClass('btn-add').addClass('btn-remove')
+        .removeClass('btn-success').addClass('btn-danger')
+        .html('<span class="oi oi-minus" title="icon name" aria-hidden="true"></span>');
+
+    var inputs = $('.controls-add .form-control-add');
+    $.each(inputs, function (index, item) {
+        item.name = 'Dances[' + index + ']';
+    });
 });

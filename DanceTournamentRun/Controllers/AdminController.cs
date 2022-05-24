@@ -87,7 +87,7 @@ namespace DanceTournamentRun.Controllers
              var sortedGr = groups.OrderBy(gr => gr.Number);
             foreach (var group in sortedGr)
             {
-                GroupViewModal groupView = new GroupViewModal() { GroupId = group.Id, Name = group.Name, Number = group.Number } ;
+                GroupViewModal groupView = new GroupViewModal() { GroupId = group.Id, Name = group.Name.Replace('_', ' '), Number = group.Number } ;
                
                 using (ApplicationDbContext db = new ApplicationDbContext())
                 {
@@ -106,7 +106,7 @@ namespace DanceTournamentRun.Controllers
             {
                 var numbers = _context.Groups.Where(g => g.TournamentId == model.TournamentId).Select(x => x.Number);
                 var newNumber = numbers.Count() != 0 ? numbers.Max() + 1 : 1;
-                Group group = new Group { Name = model.Name, Number = newNumber, TournamentId = model.TournamentId };
+                Group group = new Group { Name = model.Name.Replace(' ', '_'), Number = newNumber, TournamentId = model.TournamentId };
                 _context.Groups.Add(group);
                 await _context.SaveChangesAsync();
 
@@ -134,8 +134,9 @@ namespace DanceTournamentRun.Controllers
         {
             if (ModelState.IsValid)
             {
+                string editGrName = editGroup.Name.Replace(' ', '_');
                 var oldgr = _context.Groups.Find(editGroup.GroupId);
-                oldgr.Name = editGroup.Name != oldgr.Name ? editGroup.Name : oldgr.Name;
+                oldgr.Name = editGrName != oldgr.Name ? editGrName : oldgr.Name;
                 oldgr.Number = editGroup.Number != oldgr.Number ? GetNewNumber(oldgr, editGroup.Number) : oldgr.Number;
                 await _context.SaveChangesAsync();
 
@@ -281,6 +282,7 @@ namespace DanceTournamentRun.Controllers
             if (tournId != null)
             {
                 var pairGroups = _context.Groups.Where(p => p.TournamentId == tournId).ToList();
+                
                 List<Pair> pairs;
                 using (ApplicationDbContext db = new ApplicationDbContext())
                 {
@@ -308,8 +310,16 @@ namespace DanceTournamentRun.Controllers
                     }
                     pairsInGr.Add(lastGrId, parsForDict);
                 }
+                List<Group> spaced = new List<Group>();
+                foreach (var gr in pairGroups)
+                {
+                    Group newGr = new Group() { Id = gr.Id, Name  = gr.Name, Number = gr.Number, IsCompetitionOn = gr.IsCompetitionOn, IsRegistrationOn  = gr.IsRegistrationOn, TournamentId=gr.TournamentId };
+                    newGr.Name = newGr.Name.Replace('_', ' ');
+                    spaced.Add(newGr);
+                }
                 ViewBag.tournamentId = tournId;
-                ViewBag.pairGroups = pairGroups;
+                ViewBag.pairGroups = spaced;
+                ViewBag.unspacedGroups = pairGroups;
                 ViewBag.pairs = pairsInGr;
                 return PartialView("Pairs");
             }
@@ -422,8 +432,16 @@ namespace DanceTournamentRun.Controllers
                     RefereeViewModel viewModel = new RefereeViewModel() { Id = referee.Id, LastName = referee.LastName, FirstName = referee.FirstName, GroupsId = refGroupsId };
                     refereeViews.Add(viewModel);
                 }
+                List<Group> spaced = new List<Group>();
+                foreach (var gr in groups)
+                {
+                    Group newGr = new Group() { Id = gr.Id, Name = gr.Name, Number = gr.Number, IsCompetitionOn = gr.IsCompetitionOn, IsRegistrationOn = gr.IsRegistrationOn, TournamentId = gr.TournamentId };
+                    newGr.Name = newGr.Name.Replace('_', ' ');
+                    spaced.Add(newGr);
+                }
                 ViewBag.tournamentId = tournId;
-                ViewBag.refGroups = groups;
+                ViewBag.unspacedGroups = groups;
+                ViewBag.refGroups = spaced;
                 ViewBag.referees = refereeViews;
                 return PartialView("Referees");
             }

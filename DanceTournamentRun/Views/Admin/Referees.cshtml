@@ -2,7 +2,7 @@
 @{
     List<Group> groups = ViewBag.refGroups;
     List<RefereeViewModel> referees = ViewBag.referees;
-    var serGr = Json.Serialize(groups);
+    var serGr = Json.Serialize(ViewBag.unspacedGroups);
 }
 
     <table id="refTable" class="table table-striped col-md-9 table-bordered">

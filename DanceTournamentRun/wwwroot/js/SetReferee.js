@@ -4,10 +4,10 @@ $("#dialogAddReferee").on('show.bs.modal', function (e) {
     var groups = e.relatedTarget.dataset.groups;
     var groupsObj = JSON.parse(groups);
     //console.log(groupsObj);
-    $('select').append('<option value="' + groupsObj[0].id + '">' + groupsObj[0].name + '</option>');
+    $('select').append('<option value="' + groupsObj[0].id + '">' + groupsObj[0].name.replace("_", " ") + '</option>');
 
     for (var i = 1; i < groupsObj.length; i++) {
-        $('select').append('<option value="' + groupsObj[i].id + '">' + groupsObj[i].name + '</option>');
+        $('select').append('<option value="' + groupsObj[i].id + '">' + groupsObj[i].name.replace("_", " ") + '</option>');
     }
     $('select').selectpicker();
 });
@@ -47,7 +47,7 @@ $("#dialogEditReferee").on('show.bs.modal', function (e) {
     var refGrId = JSON.parse(GroupsId);
  
     for (var i = 0; i < groupsObj.length; i++) {
-        $('select').append('<option value="' + groupsObj[i].id + '">' + groupsObj[i].name + '</option>');
+        $('select').append('<option value="' + groupsObj[i].id + '">' + groupsObj[i].name.replace("_", " ") + '</option>');
     }
     $('select').selectpicker();
 
