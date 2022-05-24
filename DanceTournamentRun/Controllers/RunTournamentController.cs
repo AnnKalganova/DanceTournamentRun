@@ -64,7 +64,7 @@ namespace DanceTournamentRun.Controllers
 
         public async Task<ActionResult> GetRegQR(long? tournId)
         {
-            if(tournId != null)
+            if (tournId != null)
             {
                 //сформировать qr +вывести
                 List<User> registrators = new List<User>();
@@ -131,13 +131,13 @@ namespace DanceTournamentRun.Controllers
             }
         }
 
-       
-        public ActionResult UpdateRegProgress()
+        public IActionResult UpdateRegProgress(long Id)
         {
-            string text = "Пошел процесс";
-            ViewBag.text = text;
-            PartialView("RegistrationProgress");
-            return Ok();
+            return ViewComponent("RegistrationProgress",
+                new
+                {
+                    tournId = Id
+                });
         }
     }
 }

@@ -1,0 +1,11 @@
+﻿
+@{
+    int maxValue = ViewBag.maxNumber;
+    var currValue = Model * 100 / maxValue;
+    string width = currValue.ToString() + '%';
+}
+@model int
+
+<div class="progress">
+    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="@Model" aria-valuemin="0" aria-valuemax="@maxValue" style="width: @width"></div>
+</div>

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Linq;
 using Microsoft.Data.SqlClient;
+using System.Threading.Tasks;
 
 
 #nullable disable
@@ -93,6 +94,15 @@ namespace DanceTournamentRun.Models
             SqlParameter resultParam = new SqlParameter { ParameterName = "@result", SqlDbType = System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output };
             Database.ExecuteSqlRaw("IsAccessToGroupGranted @groupId, @token, @result OUT", grIdParam, tokenParam, resultParam);
             return (int)resultParam.Value;
+        }
+
+        public async Task<int> GetCompletedGroupsCount(long tournId)
+        {
+            SqlParameter tournIdParam = new SqlParameter("@tournId", tournId);
+            SqlParameter countParam = new SqlParameter { ParameterName = "@count", SqlDbType = System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output };
+            await Database.ExecuteSqlRawAsync("GetCompletedGroupsCount @tournId, @count OUT", tournIdParam, countParam);
+            return (int)countParam.Value;
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

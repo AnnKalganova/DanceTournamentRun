@@ -122,10 +122,25 @@ CREATE PROCEDURE IsAccessToGroupGranted
 	Where u.SecurityToken = @token and usGr.GroupId = @groupId
 go
 
-
 --DECLARE @res int;
 --EXEC IsAccessToGroupGranted 3, '66df9633-a860-49f0-a547-9378655e385b', @res OUTPUT
 --PRINT N'результат ' + CONVERT(VARCHAR, @res)
 --go
 
 --Drop PROCEDURE IsAccessToGroupGranted;
+
+
+
+
+-- Version from 24.05 
+CREATE PROCEDURE GetCompletedGroupsCount
+ @tournId bigint, @count int OUTPUT
+	AS
+	SELECT @count =COUNT(gr.Id)
+	FROM Groups as gr 
+	where gr.TournamentId = @tournId and gr.isRegistrationOn = 0;
+go
+
+--DECLARE @count int;
+--EXEC GetCompletedGroupsCount 1, @count OUTPUT
+--PRINT N'результат ' + CONVERT(VARCHAR, @count)
