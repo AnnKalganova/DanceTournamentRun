@@ -77,5 +77,22 @@ var formHeats = function (groupId) {
     });
 }
 
+var calcResults = function (groupId) {
+    $("#calcResBtn").addClass("disabled");
+    $("#loadingResults").html("Загрузка...");
+    $.ajax({
+        url: "/RunTournament/GetResults",
+        data: { "groupId": groupId },
+        type: "GET",
+        success: function (data) {
+            $('#groupResults').html(data);
+            $('#nextStepBtn').removeClass("disabled");
+        },
+        error: function () {
+            $("#groupResults").html("Произошла ошибка при подсчете результатов");
+        }
+    });
+}
+
 
 

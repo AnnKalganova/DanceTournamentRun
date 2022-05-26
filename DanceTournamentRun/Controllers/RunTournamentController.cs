@@ -325,6 +325,63 @@ namespace DanceTournamentRun.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "RunTournament");
         }
+
+        public IActionResult UpdateRefProgress(long Id)
+        {
+            return ViewComponent("RefereeProcess",
+                new
+                {
+                    groupId = Id
+                });
+        }
+
+        public async Task<ActionResult> GetResults(long groupId)
+        {
+            var pairs = _context.Pairs.Where(p => p.GroupId == groupId).ToList();
+            if(pairs == null)
+            {
+                return NotFound(); 
+            }
+            Dictionary<long, int> pairsScores = new Dictionary<long, int>();
+            foreach(var pair in pairs)
+            {
+                var score = await _context.GetPairScore(pair.Id);
+                pairsScores.Add(pair.Id, score);
+            }
+            pairsScores.OrderByDescending(p => p.Value);
+            int[] resDevisions  = new int[3];
+            int defaultDevision = pairs.Count / 3;
+            int index = defaultDevision;
+            //TODO проверка чтоб разделение не дощло до конца 
+            while(index < pairs.Count)
+            {
+                if (pairsScores[index-1] == pairsScores[index])
+                {
+                    index -= 1;
+                }
+                else
+                {
+                    resDevisions.Append(index);
+                    index = defaultDevision * 2;
+                }
+            }
+            resDevisions.Append(pairs.Count);
+
+            var position = 1;
+            var i = 0;
+            foreach(var dev in resDevisions)
+            {
+                while (i < dev)
+                {
+                    Result result = new Result() { PairId = pairsScores.ElementAt(i).Key, Position = position };
+                    _context.Results.Add(result);
+                    await _context.SaveChangesAsync();
+                    i++;
+                }
+                position++;
+            }
+            return NotFound();
+        }
     }
 }
 

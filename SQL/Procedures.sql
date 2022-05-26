@@ -189,3 +189,11 @@ CREATE PROCEDURE GetPairsByRefProgress
 	JOIN Scores as sc ON sc.PairId = p.Id
 	Where sc.ProgressId = @refprogressId;
 GO 
+
+CREATE PROCEDURE GetPairScore
+@pairId bigint, @score int OUTPUT
+	AS
+	SELECT @score = SUM(sc.Score)
+	FROM Scores as sc
+	Where sc.PairId = @pairId;
+go 

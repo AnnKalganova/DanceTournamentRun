@@ -101,7 +101,6 @@ namespace DanceTournamentRun.Models
             SqlParameter countParam = new SqlParameter { ParameterName = "@count", SqlDbType = System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output };
             await Database.ExecuteSqlRawAsync("GetCompletedGroupsCount @tournId, @count OUT", tournIdParam, countParam);
             return (int)countParam.Value;
-
         }
 
         public Group GetCurrentGroup(long tournId)
@@ -124,6 +123,14 @@ namespace DanceTournamentRun.Models
             SqlParameter danceIdParam = new SqlParameter("@danceId", danceId);
             var refProgress = RefereeProgresses.FromSqlRaw("EXEC GetHeats @userId, @danceId ", userIdParam, danceIdParam).ToList();
             return refProgress;
+        }
+
+        public async Task<int> GetPairScore(long pairId)
+        {
+            SqlParameter pairIdParam = new SqlParameter("@pairId", pairId);
+            SqlParameter scoreParam = new SqlParameter { ParameterName = "@score", SqlDbType = System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output };
+            await Database.ExecuteSqlRawAsync("GetPairScore @pairId, @score OUT", pairIdParam, scoreParam);
+            return (int)scoreParam.Value;
         }
 
         public List<Pair> GetPairsByRefProgress(long refProgressId)

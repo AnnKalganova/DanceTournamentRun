@@ -26,6 +26,5 @@ namespace DanceTournamentRun.ViewComponents
             var maxNumber = db.Groups.Where(g => g.TournamentId == tournId).Count();
             return maxNumber;
         }
-
     }
 }
