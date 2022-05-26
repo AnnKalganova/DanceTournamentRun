@@ -59,22 +59,23 @@ var viewRegistrators = function (tournId) {
     });
 };
 
-$('#runTournament').click(function () {
-    var buttonData = $(this).attr('data');
+
+var formHeats = function (groupId) {
+    $("#formHeatsBtn").addClass("disabled");
+    $("#loading").html("Загрузка...");
     $.ajax({
+        url: "/RunTournament/GetHeats",
+        data: { "groupId": groupId },
         type: "GET",
-        url: "/Admin/RunTourn",
-        data: { "tournId": buttonData },
         success: function (data) {
-            alert('турнир начался');
-            $('#refereesTable').html(data);
+            $('#groupHeats').html(data);
+            $('#goToRefBtn').removeClass("disabled");
         },
         error: function () {
-            alert('Error');
+            $("#groupHeats").html("Произошла ошибка при формировании заходов");
         }
-
     });
-});
+}
 
 
 

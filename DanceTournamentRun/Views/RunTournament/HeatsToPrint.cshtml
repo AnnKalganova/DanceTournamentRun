@@ -1,0 +1,43 @@
+﻿@{
+    Layout = null;
+}
+@model Dictionary<int, List<int>>
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Заходы</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body class="m-4">
+    <h4 class="mb-2">Нажмите ctr + P для печати</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col" style="width:10%;" >Заходы</th>
+                <th sope="col" style="width:60%;">Номера пар</th>
+            </tr>
+        </thead>
+        <tbody class="font-weight-bold ">
+            @foreach (var item in @Model)
+            {
+                <tr>
+                    <td>@item.Key</td>
+                    <td>
+                        @{string numbers = "";}
+                        @for (var i = 0; i < item.Value.Count - 1; i++)
+                        {
+                            numbers += item.Value[i] + ", ";
+                        }
+                        @{ numbers += item.Value.Last();}
+                        @numbers
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>

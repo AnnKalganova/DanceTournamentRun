@@ -104,6 +104,34 @@ namespace DanceTournamentRun.Models
 
         }
 
+        public Group GetCurrentGroup(long tournId)
+        {
+            SqlParameter tournIdParam = new SqlParameter("@tournId", tournId);
+            var group = Groups.FromSqlRaw("EXEC GetCurrentGroup @tournId", tournIdParam).ToList();
+            return group[0];
+        }
+
+        public List<User> GetRefereesByGroupId(long groupId)
+        {
+            SqlParameter groupIdParam = new SqlParameter("@groupId", groupId);
+            var referees = Users.FromSqlRaw("EXEC GetRefereesByGroupId @groupId", groupIdParam).ToList();
+            return referees;
+        }
+
+        public List<RefereeProgress> GetHeats(long refId, long danceId)
+        {
+            SqlParameter userIdParam = new SqlParameter("@userId", refId);
+            SqlParameter danceIdParam = new SqlParameter("@danceId", danceId);
+            var refProgress = RefereeProgresses.FromSqlRaw("EXEC GetHeats @userId, @danceId ", userIdParam, danceIdParam).ToList();
+            return refProgress;
+        }
+
+        public List<Pair> GetPairsByRefProgress(long refProgressId)
+        {
+            SqlParameter refPrIdParam = new SqlParameter("@refProgressId", refProgressId);
+            var pairs = Pairs.FromSqlRaw("EXEC GetPairsByRefProgress @refProgressId", refPrIdParam).ToList();
+            return pairs;
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -127,7 +155,12 @@ namespace DanceTournamentRun.Models
 
             modelBuilder.Entity<Group>(entity =>
             {
-                entity.Property(e => e.IsCompetitionOn).HasColumnName("isCompetitionOn");
+                entity.Property(e => e.CompetitionState).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.IsRegistrationOn)
+                    .IsRequired()
+                    .HasColumnName("isRegistrationOn")
+                    .HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.IsRegistrationOn)
                     .IsRequired()

@@ -1,26 +1,17 @@
 ﻿
+@{ 
+    var group = ViewBag.currentGroup as Group;
+}
 @model Tournament
 <div class="m-3">
     <h2>Шаг 2</h2>
-    <h4>Процесс регистрации</h4>
-    <div id="regProgress" class="mt-3 mb-3">
-        @await Component.InvokeAsync("RegistrationProgress",
-            new
-            {
-                tournId = Model.Id
-            }
-       )
-    </div>
+    <h3>@group.Name</h3>
 
-    <div class=" m-0 d-flex justify-content-between">
-        <div>
-            <a asp-action="GetRegQR" asp-controller="RunTournament" asp-route-tournId=@Model.Id target="_blank" class="btn btn-info rounded-pill rn-btn mr-2">QR организаторов</a>
-            <a asp-action="GetRefereeQR" asp-controller="RunTournament" asp-route-tournId=@Model.Id target="_blank" class="btn btn-info rounded-pill rn-btn">QR судей</a>
-        </div>
-        <a id="goStep2" class="btn btn-info rounded-pill rn-btn"
-           asp-action="GoToStepTwo" asp-controller="RunTournament" asp-route-tournId=@Model.Id>
-            <span class="oi oi-chevron-right" aria-hidden="true"></span> Шаг 2
-        </a>
-
-    </div>
+    <div id="grCompetPart"></div>
 </div>
+
+<script>
+    $.get('@Url.Action("GetGroupCompetData", "RunTournament")', { group: @group}, function (content) {
+        $("#grCompetPart").html(content);
+        });
+</script>

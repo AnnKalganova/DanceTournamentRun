@@ -53,3 +53,10 @@ GO
 ALTER TABLE [dbo].[Scores] CHECK CONSTRAINT [FK_dbo.Scores_dbo.Pairs_PairId]
 GO
 
+--Version 25.05 
+ALTER TABLE [dbo].[Groups] DROP COLUMN isCompetitionOn;
+GO
+
+ALTER TABLE  [dbo].[Groups]
+ADD CompetitionState int Default(0) NULL;
+GO

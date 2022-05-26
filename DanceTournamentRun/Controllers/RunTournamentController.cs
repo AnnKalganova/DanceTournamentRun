@@ -41,7 +41,7 @@ namespace DanceTournamentRun.Controllers
             return View(tournament);
         }
 
-        public PartialViewResult GetData(long? tournId)
+        public ActionResult GetData(long? tournId)
         {
             if (tournId != null)
             {
@@ -52,7 +52,7 @@ namespace DanceTournamentRun.Controllers
                 }
                 else if (!(bool)tourn.IsSecondStepOver)
                 {
-                    return PartialView("SecondStep", tourn);
+                    return RedirectToAction("GetGroupProcessData", "RunTournament", new { tournId = tourn.Id } );
                 }
                 else
                 {
@@ -148,9 +148,182 @@ namespace DanceTournamentRun.Controllers
                 tourn.IsFirstStepOver = true;
                 await _context.SaveChangesAsync();
 
+                var firstGr = _context.Groups.Where(gr => gr.TournamentId == tourn.Id).OrderBy(k => k.Number).First();
+                firstGr.CompetitionState = 1;
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction("Index", "RunTournament");
             }
             return NotFound();
+        }
+
+        public PartialViewResult GetGroupProcessData(long? tournId)
+        {
+            if(tournId != null)
+            {
+                Group group = new Group();
+                using (ApplicationDbContext db = new ApplicationDbContext())
+                {
+                    group = db.GetCurrentGroup((long)tournId);
+                }
+                group.Name = group.Name.Replace('_', ' ');
+                switch (group.CompetitionState)
+                {
+                    case 1:
+                        return PartialView("HeatsFormation", group);
+                    case 2:
+                        var nextGr = _context.Groups.FirstOrDefault(g => g.TournamentId == group.TournamentId && g.Number == group.Number + 1);
+                        ViewBag.nextGr = nextGr;
+                        return PartialView("RefereeProcess", group);
+                }
+            }
+            return PartialView("Error");
+        }
+
+        public IActionResult GetHeats(long groupId)
+        {
+            var pair = _context.Pairs.FirstOrDefault(p => p.GroupId == groupId);
+            if (pair == null)
+            {
+                return NotFound();
+            }
+            else if (isPairScoreExist(pair))
+            {
+                return ViewComponent("GroupHeats", new
+                {
+                    groupId = groupId
+                });
+            }
+            var pairs = _context.Pairs.Where(p => p.GroupId == groupId).ToList();
+            int[] heats = SetHeats(pairs.Count);
+            ICollection<Dance> dances;
+            using (ApplicationDbContext db = new ApplicationDbContext())
+            {
+                dances = db.GetDances((long)groupId);
+            }
+            List<User> groupReferees = new List<User>();
+            using (ApplicationDbContext db = new ApplicationDbContext())
+            {
+                groupReferees = db.GetRefereesByGroupId(groupId);
+            }
+            var refPrIds = CreateRefProgress(groupReferees, dances, heats.Length);
+            CreateScoreRecords(refPrIds, pairs, heats);
+            return ViewComponent("GroupHeats", new
+            {
+                groupId = groupId
+            });
+
+        }
+
+        private bool isPairScoreExist(Pair pair)
+        {
+            var score = _context.Scores.FirstOrDefault(s => s.PairId == pair.Id);
+            return score != null ? true : false; 
+            
+        }
+        private int[] SetHeats(int pairsCount)
+        {
+            var heatsCount = pairsCount / 8;
+            if(heatsCount == 0)
+            {
+                return new int[] { pairsCount % 8 };
+            }
+            int[] heats;
+            heats = new int[heatsCount];
+            Array.Fill(heats, 8);
+            var lastHeat = pairsCount % 8;
+            if (lastHeat != 0)
+            {
+                if (lastHeat < 5)
+                {
+                    var i = 0;
+                    while (lastHeat < 5)
+                    {
+                        heats[i] -= 1;
+                        lastHeat++;
+                        i++;
+                        if (i == heats.Length)
+                        {
+                            i = 0;
+                        }
+                    }
+                }
+                heats.Append(lastHeat);
+            }
+            return heats;
+        }
+
+        private Dictionary<int, List<long>> CreateRefProgress(List<User> referees, ICollection<Dance> dances, int heatsCount)
+        {
+            Dictionary<int, List<long>> refProgIds = new Dictionary<int,List<long>>();
+            foreach (var dance in dances) {
+                for (var i = 1; i < heatsCount + 1; i++)
+                {
+                    refProgIds.Add(i, new List<long>());
+                    foreach(var referee in referees)
+                    {
+                        RefereeProgress refereeProgress = new RefereeProgress() { UserId = referee.Id, DanceId = dance.Id, Heat = i };
+                        _context.RefereeProgresses.Add(refereeProgress);
+                        _context.SaveChanges();
+                        refProgIds[i].Add(refereeProgress.Id);
+                    }
+                }
+            }
+            return refProgIds;
+        }
+
+        private async void CreateScoreRecords(Dictionary<int,List<long>> refProgIds, List<Pair> pairs, int[] pairsInHeatCount)
+        {
+            pairs.OrderBy(p => p.Number);
+            var minPairIndex = 0;
+            for(var i = 0; i < pairsInHeatCount.Length ; i++)
+            {
+                var PairCount = pairsInHeatCount[i];
+                foreach(var refId in refProgIds[i+1])
+                {
+                    for (var k = minPairIndex; k < minPairIndex + PairCount; k++)
+                    {
+                        Score score = new Score() { PairId = pairs[k].Id, ProgressId = refId, Score1 = 0 };
+                        _context.Scores.Add(score);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                minPairIndex += PairCount;
+            }
+        } 
+
+        public async Task<ActionResult> GetHeatsToPrint(long? groupId)
+        {
+            if(groupId == null)
+            {
+                return NotFound();
+            }
+            var danceId = _context.GroupsDances.First(d => d.GroupId == groupId).Id;
+            var refereeId = _context.GetRefereesByGroupId((long)groupId)[0].Id;
+            var refProgresses = _context.GetHeats(refereeId, danceId);
+            Dictionary<int, List<int>> heats = new Dictionary<int, List<int>>();
+            foreach (var progress in refProgresses)
+            {
+                heats.Add(progress.Heat, new List<int>());
+                var pairsInHeat = _context.GetPairsByRefProgress(progress.Id);
+                foreach (var pair in pairsInHeat)
+                {
+                    heats[progress.Heat].Add((int)pair.Number);
+                }
+            }
+            return View("HeatsToPrint", heats);
+        }
+
+        public async Task<ActionResult> GoToRefereeProcessStep(long groupId)
+        {
+            var group = _context.Groups.Find(groupId);
+            if(group == null || group.CompetitionState != 1)
+            {
+                return NotFound();
+            }
+            group.CompetitionState = 2;
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "RunTournament");
         }
     }
 }

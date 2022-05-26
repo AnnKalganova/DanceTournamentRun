@@ -313,7 +313,7 @@ namespace DanceTournamentRun.Controllers
                 List<Group> spaced = new List<Group>();
                 foreach (var gr in pairGroups)
                 {
-                    Group newGr = new Group() { Id = gr.Id, Name  = gr.Name, Number = gr.Number, IsCompetitionOn = gr.IsCompetitionOn, IsRegistrationOn  = gr.IsRegistrationOn, TournamentId=gr.TournamentId };
+                    Group newGr = new Group() { Id = gr.Id, Name  = gr.Name, Number = gr.Number, CompetitionState = gr.CompetitionState, IsRegistrationOn  = gr.IsRegistrationOn, TournamentId=gr.TournamentId };
                     newGr.Name = newGr.Name.Replace('_', ' ');
                     spaced.Add(newGr);
                 }
@@ -435,7 +435,7 @@ namespace DanceTournamentRun.Controllers
                 List<Group> spaced = new List<Group>();
                 foreach (var gr in groups)
                 {
-                    Group newGr = new Group() { Id = gr.Id, Name = gr.Name, Number = gr.Number, IsCompetitionOn = gr.IsCompetitionOn, IsRegistrationOn = gr.IsRegistrationOn, TournamentId = gr.TournamentId };
+                    Group newGr = new Group() { Id = gr.Id, Name = gr.Name, Number = gr.Number, CompetitionState = gr.CompetitionState, IsRegistrationOn = gr.IsRegistrationOn, TournamentId = gr.TournamentId };
                     newGr.Name = newGr.Name.Replace('_', ' ');
                     spaced.Add(newGr);
                 }
@@ -627,9 +627,9 @@ namespace DanceTournamentRun.Controllers
                     registrators = db.GetRegistratorsByTournId((long)tournId);
                 }
 
-                var groups = _context.Groups.Where(p => p.TournamentId == tournId).ToList();
-                var regCount = registrators.Count();
-                for (var i = 0; i < groups.Count(); i++)
+                var groups = _context.Groups.Where(p => p.TournamentId == tournId).OrderBy(k=>k.Number).ToList();
+                var regCount = registrators.Count;
+                for (var i = 0; i < groups.Count; i++)
                 {
                     var regID = registrators[i % regCount].Id;
                     var grId = groups[i].Id;
@@ -637,6 +637,8 @@ namespace DanceTournamentRun.Controllers
                     _context.UsersGroups.Add(usGr);
                     await _context.SaveChangesAsync();
                 }
+                groups[0].CompetitionState = 1;
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "RunTournament");
             }
             return NotFound();

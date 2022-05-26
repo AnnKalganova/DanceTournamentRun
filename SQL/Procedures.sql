@@ -72,12 +72,12 @@ go
 --go
 
 
---Version from 21.05 Пересоздай процедуру 
+--Version from 25.05 Пересоздай процедуру 
 CREATE PROCEDURE GetGroupsByToken
 	@token nvarchar(50)
 	AS
 BEGIN
-	SELECT gr.Id, gr.isCompetitionOn, gr.isRegistrationOn, gr.Name, gr.Number, gr.TournamentId
+	SELECT gr.Id, gr.CompetitionState, gr.isRegistrationOn, gr.Name, gr.Number, gr.TournamentId
 	FROM Groups as gr
 	JOIN UsersGroups as usGr ON usGr.GroupId = gr.Id
 	JOIN Users as u ON u.Id = usGr.UserId
@@ -130,8 +130,6 @@ go
 --Drop PROCEDURE IsAccessToGroupGranted;
 
 
-
-
 -- Version from 24.05 
 CREATE PROCEDURE GetCompletedGroupsCount
  @tournId bigint, @count int OUTPUT
@@ -144,3 +142,50 @@ go
 --DECLARE @count int;
 --EXEC GetCompletedGroupsCount 1, @count OUTPUT
 --PRINT N'результат ' + CONVERT(VARCHAR, @count)
+
+--Version 25.05 пересоздай процедуру
+CREATE PROCEDURE GetCurrentGroup
+@tournId bigint
+	AS 
+	SELECT TOP 1 *
+	FROM Groups as gr
+	WHERE gr.TournamentId = @tournId and gr.CompetitionState = 1 or gr.CompetitionState = 2
+	ORDER BY gr.Number;
+go 
+
+--EXEC GetCurrentGroup 1;
+--Drop PROCEDURE GetCurrentGroup;
+
+--Version 26.05 
+CREATE PROCEDURE GetRefereesByGroupId
+@groupId bigint
+	AS 
+	SELECT u.Id, u.LastName, u.FirstName, u.Login, u.Password,u.RoleId,u.SecurityToken
+	FROM Users as u
+	join UsersGroups as usGr ON usGr.UserId = u.Id
+	Join Roles as r ON r.Id = u.RoleId
+	where r.Name = 'referee' and usGr.GroupId = @groupId;
+go 
+
+--exec GetRefereesByGroupId 2;
+
+--drop procedure GetRefereesByGroupId;
+
+CREATE PROCEDURE GetHeats
+@userId bigint, @danceId bigint
+	AS
+	SELECT refPr.Id, refPr.DanceId, refPr.UserId, refPr.Heat, refPr.isCompleted
+	FROM RefereeProgress AS refPr
+	JOIN  Users as u ON refPr.UserId = u.Id
+	JOIN Roles as r ON r.Id = u.RoleId
+	WHERE r.Name = 'referee' and refPr.DanceId = @danceId and refPr.UserId = @userId;
+go 
+
+CREATE PROCEDURE GetPairsByRefProgress
+@refProgressId bigint
+	AS 
+	SELECT p.Id, p.Partner1FirstName, p.Partner1LastName, p.Partner2FirstName, p.Partner2LastName, p.GroupId, p.Number
+	FROM Pairs as p
+	JOIN Scores as sc ON sc.PairId = p.Id
+	Where sc.ProgressId = @refprogressId;
+GO 
