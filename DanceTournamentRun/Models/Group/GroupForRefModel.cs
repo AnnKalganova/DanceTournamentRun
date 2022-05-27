@@ -9,7 +9,7 @@ namespace DanceTournamentRun.Models
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public bool isGroupRun { get; set; }
+        public int State{ get; set; }
         public bool isAccessGranted { get; set; }
     }
 }

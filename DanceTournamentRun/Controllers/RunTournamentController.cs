@@ -54,7 +54,7 @@ namespace DanceTournamentRun.Controllers
                 {
                     return RedirectToAction("GetGroupProcessData", "RunTournament", new { tournId = tourn.Id } );
                 }
-                else
+                else 
                 {
                     return PartialView("EndStep");
                 }

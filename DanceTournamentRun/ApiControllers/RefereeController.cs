@@ -54,7 +54,7 @@ namespace DanceTournamentRun.ApiControllers
                 {   
                     Id = group.Id,
                     Name = group.Name, 
-                    isGroupRun = group.CompetitionState == 2 ? true : false, 
+                    State = (int)group.CompetitionState, 
                     isAccessGranted = access != 0 ? true : false 
                 };
                 groupsModels.Add(model);

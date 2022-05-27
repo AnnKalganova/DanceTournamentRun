@@ -209,13 +209,3 @@ CREATE PROCEDURE GetAllTournUsers
 	Where usTr.TournamentId = @tournId;
 GO 
 
-CREATE PROCEDURE GetAllTournGroupByToken 
-@token nvarchar(50)
-	AS
-	SELECT gr.Id, gr.Name, gr.isRegistrationOn, gr.CompetitionState, gr.Number, gr.TournamentId
-	FROM Groups as gr
-	JOIN Tournaments as tr ON tr.Id = gr.Id
-	JOIN UsersTournaments as usTr ON usTr.TournamentId = tr.Id
-	JOIN Users as u ON u.Id = usTr.UserId
-	WHERE u.SecurityToken = @token;
-GO 
