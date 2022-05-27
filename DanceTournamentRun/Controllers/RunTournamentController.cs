@@ -348,7 +348,8 @@ namespace DanceTournamentRun.Controllers
                 var score = await _context.GetPairScore(pair.Id);
                 pairsScores.Add(pair.Id, score);
             }
-            pairsScores.OrderByDescending(p => p.Value);
+            //сортирует ли 
+           // pairsScores = pairsScores.OrderByDescending(p => p.Value);
             int[] resDevisions  = new int[3];
             int defaultDevision = pairs.Count / 3;
             int index = defaultDevision;
@@ -380,7 +381,11 @@ namespace DanceTournamentRun.Controllers
                 }
                 position++;
             }
-            return NotFound();
+            return ViewComponent("Results",
+                new
+                {
+                    orderedPairs = pairsScores
+                });
         }
     }
 }

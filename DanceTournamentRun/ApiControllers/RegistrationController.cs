@@ -52,8 +52,10 @@ namespace DanceTournamentRun.ApiControllers
             }
             if (groups.Count() == 0)
                 return NotFound();
-
             List<GroupForRegModel> regGroups = new List<GroupForRegModel>();
+            if (groups.FirstOrDefault(g => g.IsRegistrationOn == false) != null)
+                return regGroups;
+            
             foreach(var group in groups)
             {
                 GroupForRegModel model = new GroupForRegModel() { Id = group.Id, Name = group.Name.Replace("_"," "), CompletedState = false };

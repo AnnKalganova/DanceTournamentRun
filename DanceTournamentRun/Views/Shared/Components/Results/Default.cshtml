@@ -1,0 +1,28 @@
+﻿
+@model List<ResultsViewModel>
+<table class="table table-bordered ">
+    <thead>
+        <tr>
+            <th scope="col" class="col-md-1">Место</th>
+            <th sope="col" class=" col-md-1">Номер <br />пары</th>
+            <th sope="col" class=" col-md-4">Партнер - Партнерша</th>
+        </tr>
+    </thead>
+    <tbody class="font-weight-bold ">
+        @foreach (var item in @Model)
+        {
+            <tr>
+                <td>@item.Position</td>
+                <td>@item.Number</td>
+                <td>
+                    @item.Partner1FullName - @item.Partner2Fullname
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="d-flex justify-content-end">
+    <a asp-action="GetHeatsToPrint" asp-controller="RunTournament" asp-route-groupId="@ViewBag.groupId" target="_blank" class="btn btn-info rounded-pill rn-btn">Печать</a>
+
+</div>
