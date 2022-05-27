@@ -147,12 +147,6 @@ namespace DanceTournamentRun.Models
             return users;
         }
 
-        public List<Group> GetAllTournGroups(string token)
-        {
-            SqlParameter param = new SqlParameter { ParameterName = "@token", Value = token, SqlDbType = System.Data.SqlDbType.NVarChar, Size = 50 };
-            var groups = Groups.FromSqlRaw("EXEC GetAllTournGroupByToken @token", param).ToList();
-            return groups;
-        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

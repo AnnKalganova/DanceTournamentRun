@@ -40,11 +40,9 @@ namespace DanceTournamentRun.ApiControllers
         [HttpGet("groups")]
         public ActionResult<List<GroupForRefModel>> GetGroups(string token)
         {
+            var tournId = _context.UsersTournaments.FirstOrDefault(u => u.User.SecurityToken == token).TournamentId;
             List<Group> allGroups = new List<Group>();
-            using (ApplicationDbContext db = new ApplicationDbContext())
-            {
-                allGroups = db.GetAllTournGroups(token);
-            }
+            allGroups = _context.Groups.Where(g => g.TournamentId == tournId).ToList();
             if (allGroups == null)
                 return NotFound();
             List<GroupForRefModel> groupsModels = new List<GroupForRefModel>();
