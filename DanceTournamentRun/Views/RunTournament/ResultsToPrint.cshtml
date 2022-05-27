@@ -1,0 +1,41 @@
+﻿
+@{
+    Layout = null;
+}
+@model List<ResultsViewModel>
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Заходы</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body class="m-4">
+    <h4 class="mb-2">Нажмите ctr + P для печати</h4>
+    <table class="table table-bordered ">
+        <thead>
+            <tr>
+                <th scope="col" style="width:15%;">Место</th>
+                <th sope="col" style="width:15%;">Номер пары</th>
+                <th sope="col" style="width:70%;">Партнер - Партнерша</th>
+            </tr>
+        </thead>
+        <tbody class="font-weight-bolder ">
+            @foreach (var item in @Model)
+            {
+                <tr>
+                    <td class="text-center">@item.Position</td>
+                    <td class="text-center">@item.Number</td>
+                    <td>
+                        @item.Partner1FullName - @item.Partner2Fullname
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</body>
+</html>

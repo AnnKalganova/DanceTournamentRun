@@ -197,3 +197,25 @@ CREATE PROCEDURE GetPairScore
 	FROM Scores as sc
 	Where sc.PairId = @pairId;
 go 
+
+
+--Version 27.05 
+CREATE PROCEDURE GetAllTournUsers
+@tournId bigint
+	AS
+	SELECT u.Id, u.LastName, u.FirstName, u.Login, u.Password, u.RoleId, u.SecurityToken
+	FROM Users as u
+	Join UsersTournaments as usTr ON usTr.UserId = u.Id
+	Where usTr.TournamentId = @tournId;
+GO 
+
+CREATE PROCEDURE GetAllTournGroupByToken 
+@token nvarchar(50)
+	AS
+	SELECT gr.Id, gr.Name, gr.isRegistrationOn, gr.CompetitionState, gr.Number, gr.TournamentId
+	FROM Groups as gr
+	JOIN Tournaments as tr ON tr.Id = gr.Id
+	JOIN UsersTournaments as usTr ON usTr.TournamentId = tr.Id
+	JOIN Users as u ON u.Id = usTr.UserId
+	WHERE u.SecurityToken = @token;
+GO 

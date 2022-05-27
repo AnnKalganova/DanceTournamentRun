@@ -14,19 +14,19 @@
 
     <div class=" m-0 d-flex justify-content-between">
         <div>
-            <a id="calcResBtn" onclick="calcResults(@Model.Id)" class="btn btn-info rounded-pill rn-btn mr-2 disabled">
+            <a id="calcResBtn" onclick="calcResults(@Model.Id)" class="btn btn-info rounded-pill rn-btn mr-2 disabled text-white">
                 Посчитать результаты
             </a>
         </div>
         @if (ViewBag.nextGr == null)
         {
-            <a id="nextStepBtn" class="btn btn-info rounded-pill rn-btn disabled" asp-action="GoToStepTwo" asp-controller="RunTournament" asp-route-tournId=@Model.Id>
+            <a id="nextStepBtn" class="btn btn-info rounded-pill rn-btn disabled" asp-action="GoToEndStep" asp-controller="RunTournament" asp-route-tournId=@Model.TournamentId>
                 <span class="oi oi-chevron-right" aria-hidden="true"></span> Шаг 3
             </a>
         }
         else
         {
-            <a id="nextStepBtn" class="btn btn-info rounded-pill rn-btn disabled" asp-action="GoToStepTwo" asp-controller="RunTournament" asp-route-tournId=@Model.Id>
+            <a id="nextStepBtn" class="btn btn-info rounded-pill rn-btn disabled" asp-action="GoToNextGroup" asp-controller="RunTournament" asp-route-groupId=@Model.Id asp-route-nextGrId="@ViewBag.nextGr.Id">
                 <span class="oi oi-chevron-right" aria-hidden="true"></span> @ViewBag.nextGr.Name
             </a>
         }
@@ -35,15 +35,6 @@
         <h5 id="loadingResults" class="text-muted ml-3"></h5>
     </div>
 
-    @*<div class="row m-0 mt-3">
-            <a id="formHeatsBtn" onclick="formHeats(@Model.Id)" class="btn btn-info rounded-pill rn-btn mr-2 text-white">Сформировать заходы</a>
-            <a id="goToRefBtn" asp-action="GoToRefereeProcessStep" asp-controller="RunTournament" asp-route-groupId=@Model.Id class="btn btn-info rounded-pill rn-btn disabled">
-                <span class="oi oi-chevron-right" aria-hidden="true"></span> Судейство
-            </a>
-        </div>
-        <div id="groupHeats" class="mt-3 mb-3">
-            <h5 id="loading" class="text-muted ml-3"></h5>
-        </div>*@
 </div>
 
 <script>

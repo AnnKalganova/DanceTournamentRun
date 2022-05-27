@@ -43,12 +43,12 @@ GO
 
 ALTER TABLE [dbo].[Scores]  WITH CHECK ADD  CONSTRAINT [FK_dbo.Scores_dbo.RefereeProgress_ProgressId] FOREIGN KEY([ProgressId])
 REFERENCES [dbo].[RefereeProgress] ([Id])
-ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Scores] CHECK CONSTRAINT [FK_dbo.Scores_dbo.RefereeProgress_ProgressId]
 GO
 ALTER TABLE [dbo].[Scores]  WITH CHECK ADD  CONSTRAINT [FK_dbo.Scores_dbo.Pairs_PairId] FOREIGN KEY([PairId])
 REFERENCES [dbo].[Pairs] ([Id])
+ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Scores] CHECK CONSTRAINT [FK_dbo.Scores_dbo.Pairs_PairId]
 GO
@@ -59,4 +59,20 @@ GO
 
 ALTER TABLE  [dbo].[Groups]
 ADD CompetitionState int Default(0) NULL;
+GO
+
+--Version 27 
+--1) Delete foreign keys of Score table 
+--2) Run lines below 
+
+ALTER TABLE [dbo].[Scores]  WITH CHECK ADD  CONSTRAINT [FK_dbo.Scores_dbo.RefereeProgress_ProgressId] FOREIGN KEY([ProgressId])
+REFERENCES [dbo].[RefereeProgress] ([Id])
+GO
+ALTER TABLE [dbo].[Scores] CHECK CONSTRAINT [FK_dbo.Scores_dbo.RefereeProgress_ProgressId]
+GO
+ALTER TABLE [dbo].[Scores]  WITH CHECK ADD  CONSTRAINT [FK_dbo.Scores_dbo.Pairs_PairId] FOREIGN KEY([PairId])
+REFERENCES [dbo].[Pairs] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Scores] CHECK CONSTRAINT [FK_dbo.Scores_dbo.Pairs_PairId]
 GO

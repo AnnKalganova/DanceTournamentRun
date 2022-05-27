@@ -38,17 +38,30 @@ namespace DanceTournamentRun.ApiControllers
         //GET: api/Referee/{token}/groups
         //get groups by token
         [HttpGet("groups")]
-        public ActionResult<List<Group>> GetGroups(string token)
+        public ActionResult<List<GroupForRefModel>> GetGroups(string token)
         {
-
-            List<Group> groups = new List<Group>();
+            List<Group> allGroups = new List<Group>();
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
-                groups = db.GetGroupsByToken(token);
+                allGroups = db.GetAllTournGroups(token);
             }
-            if (groups.Count() == 0)
+            if (allGroups == null)
                 return NotFound();
-            return groups;
+            List<GroupForRefModel> groupsModels = new List<GroupForRefModel>();
+            allGroups = allGroups.OrderBy(g => g.Number).ToList();
+            foreach(var group in allGroups)
+            {
+                var access = _context.IsAccessToGroupGranted(group.Id, token);
+                GroupForRefModel model = new GroupForRefModel() 
+                {   
+                    Id = group.Id,
+                    Name = group.Name, 
+                    isGroupRun = group.CompetitionState == 2 ? true : false, 
+                    isAccessGranted = access != 0 ? true : false 
+                };
+                groupsModels.Add(model);
+            }
+            return groupsModels;
         }
 
         [HttpGet("pairs/{grId}")]
