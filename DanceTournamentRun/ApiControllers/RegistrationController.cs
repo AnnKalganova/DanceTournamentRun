@@ -56,7 +56,7 @@ namespace DanceTournamentRun.ApiControllers
             List<GroupForRegModel> regGroups = new List<GroupForRegModel>();
             foreach(var group in groups)
             {
-                GroupForRegModel model = new GroupForRegModel() { Id = group.Id, Name = group.Name, CompletedState = false };
+                GroupForRegModel model = new GroupForRegModel() { Id = group.Id, Name = group.Name.Replace("_"," "), CompletedState = false };
                 var pairWhithNoNumber = _context.Pairs.FirstOrDefault(p => p.GroupId == group.Id && p.Number == null);
                 if(pairWhithNoNumber == null )
                 {
