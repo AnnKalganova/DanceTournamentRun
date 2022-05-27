@@ -53,7 +53,7 @@ namespace DanceTournamentRun.ApiControllers
                 GroupForRefModel model = new GroupForRefModel() 
                 {   
                     Id = group.Id,
-                    Name = group.Name, 
+                    Name = group.Name.Replace("_", " "), 
                     State = (int)group.CompetitionState, 
                     isAccessGranted = access != 0 ? true : false 
                 };

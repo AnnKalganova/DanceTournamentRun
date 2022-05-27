@@ -67,6 +67,7 @@ GO
 
 ALTER TABLE [dbo].[Scores]  WITH CHECK ADD  CONSTRAINT [FK_dbo.Scores_dbo.RefereeProgress_ProgressId] FOREIGN KEY([ProgressId])
 REFERENCES [dbo].[RefereeProgress] ([Id])
+
 GO
 ALTER TABLE [dbo].[Scores] CHECK CONSTRAINT [FK_dbo.Scores_dbo.RefereeProgress_ProgressId]
 GO

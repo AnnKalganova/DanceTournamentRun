@@ -2,4 +2,19 @@
 @*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
-Завершить турнир??
+@model Tournament
+    <div id="delDialog"  class="d-flex flex-column mt-5">
+        <h1 class="text-center mt-2" style="font-weight:300;">Завершить турнир?</h1>
+        <div class="text-center mt-2">
+            <a id="delTournBtn" style="width:120px;" class="btn btn-info rounded-pill rn-btn text-white"
+               asp-action="DeleteTournament" asp-controller="RunTournament" asp-route-tournId=@Model.Id>Да</a>
+        </div>
+    </div>
+
+<script>
+    var delTournBtn = document.getElementById('delTournBtn');
+
+    delTournBtn.addEventListener('click', function () {
+        $("#delDialog").html('<div class="text-center display-4 mt-5">Спасибо, что выбрали нас!</div>');
+    });
+</script>

@@ -31,7 +31,7 @@ namespace DanceTournamentRun.Controllers
             Tournament tournament = _context.Tournaments.FirstOrDefault(p => p.UserId == userId);
             if (tournament == null)
             {
-                return RedirectToAction("CreateTournament");
+                return RedirectToAction("CreateTournament", "Admin");
             }
             if (!(bool)tournament.IsTournamentRun)
             {
@@ -56,7 +56,7 @@ namespace DanceTournamentRun.Controllers
                 }
                 else 
                 {
-                    return PartialView("EndStep");
+                    return PartialView("EndStep", tourn);
                 }
             }
             return PartialView("Error");
@@ -173,7 +173,7 @@ namespace DanceTournamentRun.Controllers
                         return PartialView("HeatsFormation", group);
                     case 2:
                         var nextGr = _context.Groups.FirstOrDefault(g => g.TournamentId == group.TournamentId && g.Number == group.Number + 1);
-                        ViewBag.nextGr = nextGr.Name.Replace("_"," ");
+                        ViewBag.nextGr = nextGr == null ? null : nextGr.Name.Replace("_"," ");
                         return PartialView("RefereeProcess", group);
                 }
             }
@@ -418,17 +418,28 @@ namespace DanceTournamentRun.Controllers
 
         public async Task<ActionResult> GoToEndStep(long tournId)
         {
+            var tournament = _context.Tournaments.Find(tournId);
+            if (tournament == null)
+                return NotFound();
+            tournament.IsSecondStepOver = true;
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "RunTournament");
+            
+        }
+
+        public async Task<ActionResult> DeleteTournament(long tournId)
+        {
             long userId = long.Parse(this.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             Tournament tournament = _context.Tournaments.FirstOrDefault(p => p.UserId == userId);
-            if(tournament.Id != tournId)
+            if (tournament.Id != tournId)
             {
                 return NotFound();
             }
-            var groups = _context.GetGroups(tournId);
-            foreach(var group in groups)
+            var groups = _context.Groups.Where(gr=> gr.TournamentId == tournId).ToList();
+            foreach (var group in groups)
             {
                 var dances = _context.GetDances(group.Id);
-                foreach(var dance in dances)
+                foreach (var dance in dances)
                 {
                     _context.Dances.Remove(dance);
                     await _context.SaveChangesAsync();
@@ -437,14 +448,14 @@ namespace DanceTournamentRun.Controllers
                 await _context.SaveChangesAsync();
             }
             var referees = _context.GetAllTournUsers(tournId);
-            foreach(var referee in referees)
+            foreach (var referee in referees)
             {
                 _context.Users.Remove(referee);
                 await _context.SaveChangesAsync();
             }
             _context.Tournaments.Remove(tournament);
             await _context.SaveChangesAsync();
-            return NotFound();
+            return RedirectToAction("Index", "RunTournament");
         }
     }
 }
