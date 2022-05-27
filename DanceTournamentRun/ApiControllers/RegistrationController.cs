@@ -43,7 +43,7 @@ namespace DanceTournamentRun.ApiControllers
         //GET: api/Registration/{token}/groups
         //get groups by token
         [HttpGet("groups")]
-        public ActionResult<List<Group>> GetGroups(string token) {
+        public ActionResult<List<GroupForRegModel>> GetGroups(string token) {
 
             List<Group> groups = new List<Group>();
             using (ApplicationDbContext db = new ApplicationDbContext())
@@ -52,13 +52,25 @@ namespace DanceTournamentRun.ApiControllers
             }
             if (groups.Count() == 0)
                 return NotFound();
-            return groups;
+
+            List<GroupForRegModel> regGroups = new List<GroupForRegModel>();
+            foreach(var group in groups)
+            {
+                GroupForRegModel model = new GroupForRegModel() { Id = group.Id, Name = group.Name, CompletedState = false };
+                var pairWhithNoNumber = _context.Pairs.FirstOrDefault(p => p.GroupId == group.Id && p.Number == null);
+                if(pairWhithNoNumber == null )
+                {
+                    model.CompletedState = true;
+                }
+                regGroups.Add(model);
+            }
+            return regGroups;
         }
 
         //GET: api/Registration/{token}/pairs/{grId}
         //get pairs by group with token verification
         [HttpGet("pairs/{grId}")]
-        public async Task<ActionResult<IEnumerable<Pair>>> GetPairsByGroup(string token, long grId)
+        public async Task<ActionResult<List<Pair>>> GetPairsByGroup(string token, long grId)
         {
             int access;
             using (ApplicationDbContext db = new ApplicationDbContext())
@@ -68,7 +80,7 @@ namespace DanceTournamentRun.ApiControllers
             if (access != 0)
             {
                 var pairs = await _context.Pairs.Where(x => x.GroupId == grId).ToListAsync();
-                return pairs;
+                return pairs.OrderBy(p => p.Partner1LastName).ToList();
             }
             return NotFound();
         }
@@ -84,12 +96,11 @@ namespace DanceTournamentRun.ApiControllers
                 access = db.IsAccessToGroupGranted(pair.GroupId, token);
             }
             //TODO проверка на то что такая пара есть или номер есть
-            var oldPair = _context.Pairs.FirstOrDefault(p => p.Id == pair.Id);
-            if (oldPair == null || access == 0)
+            if ( access == 0)
             {
                 return NotFound();
             }
-            oldPair = pair;
+            _context.Entry(pair).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return Ok();
         }
