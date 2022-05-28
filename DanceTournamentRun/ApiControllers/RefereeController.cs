@@ -63,19 +63,39 @@ namespace DanceTournamentRun.ApiControllers
         }
 
         [HttpGet("pairs/{grId}")]
-        public async Task<ActionResult<IEnumerable<Pair>>> GetPairsByGroup(string token, long grId)
+        public async Task<ActionResult<HeatInfo>> GetPairsByGroup(string token, long grId)
         {
             int access;
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
                 access = db.IsAccessToGroupGranted(grId, token);
             }
-            if (access != 0)
+            if (access == 0)
+                return NotFound();
+            var dances = _context.GetDances(grId);
+            var userId = _context.Users.First(u => u.SecurityToken == token).Id;
+            HeatInfo heatInfo = new HeatInfo() { PairsInfo = new List<HeatPairInfo>()};
+            foreach(var dance in dances)
             {
-                var pairs = await _context.Pairs.Where(x => x.GroupId == grId).ToListAsync();
-                return pairs;
+                RefereeProgress progress = _context.RefereeProgresses.Where(r => r.DanceId == dance.Id && r.UserId == userId && r.IsCompleted == false)
+                    .OrderBy(r => r.Heat).FirstOrDefault();
+                if(progress != null)
+                {
+                    heatInfo.RefProgressId = progress.Id;
+                    heatInfo.Dance = dance.Name;
+                    heatInfo.Heat = progress.Heat;
+                    break;
+                }
             }
-            return NotFound();
+            var scores = _context.Scores.Where(s => s.ProgressId == heatInfo.RefProgressId).ToList();
+            foreach(var score in scores)
+            {
+                Pair pair = _context.Pairs.Find(score.PairId);
+                HeatPairInfo pairInfo = new HeatPairInfo() { ScoreId = score.Id, Score = (int)score.Score1, PairNumber = (int)pair.Number };
+                heatInfo.PairsInfo.Add(pairInfo);
+            }
+            heatInfo.PairsInfo = heatInfo.PairsInfo.OrderBy(p => p.PairNumber).ToList();
+            return heatInfo;
         }
 
     }
