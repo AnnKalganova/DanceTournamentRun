@@ -101,14 +101,32 @@ namespace DanceTournamentRun.ApiControllers
         [HttpPost("setScore")]
         public async Task<ActionResult> SetScore(string token, [FromBody] RefScoreSet scoreSet)
         {
-            var userId = _context.Users.FirstOrDefault(u => u.SecurityToken == token).Id;
-            var progress = _context.RefereeProgresses.First(r=>r.Id == scoreSet.RefProgressId && r.UserId == userId);
-            if (progress == null)
+            if (!isThisRefereesProgress(token, scoreSet.RefProgressId))
                 return NotFound();
             var score = _context.Scores.Find(scoreSet.ScoreId);
             score.Score1 = scoreSet.Score;
             await _context.SaveChangesAsync();
             return Ok();
+        }
+
+        [HttpPost("complete")]
+        public async Task<ActionResult> CompleteRefereeing (string token, long refProgressId)
+        {
+            if (!isThisRefereesProgress(token, refProgressId))
+                return NotFound();
+            var progress = _context.RefereeProgresses.Find(refProgressId);
+            progress.IsCompleted = true;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        private bool isThisRefereesProgress( string token, long refProgId)
+        {
+            var userId = _context.Users.FirstOrDefault(u => u.SecurityToken == token).Id;
+            var progress = _context.RefereeProgresses.First(r => r.Id == refProgId && r.UserId == userId);
+            if (progress == null)
+                return false;
+            return true;
         }
 
     }
