@@ -98,5 +98,18 @@ namespace DanceTournamentRun.ApiControllers
             return heatInfo;
         }
 
+        [HttpPost("setScore")]
+        public async Task<ActionResult> SetScore(string token, [FromBody] RefScoreSet scoreSet)
+        {
+            var userId = _context.Users.FirstOrDefault(u => u.SecurityToken == token).Id;
+            var progress = _context.RefereeProgresses.First(r=>r.Id == scoreSet.RefProgressId && r.UserId == userId);
+            if (progress == null)
+                return NotFound();
+            var score = _context.Scores.Find(scoreSet.ScoreId);
+            score.Score1 = scoreSet.Score;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
     }
 }
