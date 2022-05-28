@@ -293,7 +293,7 @@ namespace DanceTournamentRun.Controllers
             }
         } 
 
-        public async Task<ActionResult> GetHeatsToPrint(long? groupId)
+        public ActionResult GetHeatsToPrint(long? groupId)
         {
             if(groupId == null)
             {
@@ -338,6 +338,7 @@ namespace DanceTournamentRun.Controllers
 
         public async Task<ActionResult> GetResults(long groupId)
         {
+            //TODO разделить на более мелкие 
             var pairs = _context.Pairs.Where(p => p.GroupId == groupId).ToList();
             if(pairs == null)
             {

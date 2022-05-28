@@ -62,6 +62,8 @@ namespace DanceTournamentRun.ApiControllers
             return groupsModels;
         }
 
+        //GET: api/Referee/{token}/pairs/{grId}
+        //get pairs by group
         [HttpGet("pairs/{grId}")]
         public async Task<ActionResult<HeatInfo>> GetPairsByGroup(string token, long grId)
         {
@@ -98,6 +100,8 @@ namespace DanceTournamentRun.ApiControllers
             return heatInfo;
         }
 
+        //POST: api/Referee/{token}/setScore
+        //set score 
         [HttpPost("setScore")]
         public async Task<ActionResult> SetScore(string token, [FromBody] RefScoreSet scoreSet)
         {
@@ -109,6 +113,8 @@ namespace DanceTournamentRun.ApiControllers
             return Ok();
         }
 
+        //POST: api/Referee/{token}/complete
+        //set complete state on referee progress
         [HttpPost("complete")]
         public async Task<ActionResult> CompleteRefereeing (string token, long refProgressId)
         {

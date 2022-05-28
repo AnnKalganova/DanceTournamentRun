@@ -90,20 +90,31 @@ namespace DanceTournamentRun.ApiControllers
         //POST: api/Registration/{token}/updatePair/{pair}
         //update pair by pair object with token verification
         [HttpPost("updatePair")]
-        public async Task<IActionResult> UpdatePair(string token,[FromBody] Pair pair)
+        public async Task<ActionResult<string>> UpdatePair(string token,[FromBody] Pair pair)
         {
             int access;
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
                 access = db.IsAccessToGroupGranted(pair.GroupId, token);
             }
-            //TODO проверка на то что такая пара есть или номер есть
             if ( access == 0)
-            {
                 return NotFound();
+            
+            int countSimilarP1, countSimilarP2;
+            using (ApplicationDbContext db = new ApplicationDbContext())
+            {
+                countSimilarP1 = db.FindSimilarPartner(pair.GroupId, pair.Partner1LastName, pair.Partner1FirstName);
+                countSimilarP2 = db.FindSimilarPartner(pair.GroupId, pair.Partner2LastName, pair.Partner2FirstName);
             }
-            _context.Entry(pair).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            var simularNumber = _context.Pairs.First(p => p.Id != pair.Id && p.Number == pair.Number);
+            if (countSimilarP1 != 0)
+                return BadRequest("Такой партнер уже участвует в группе");
+            else if (countSimilarP2 != 0)
+                return BadRequest("Такая партнерша уже учавствует в группе");
+            if (simularNumber != null)
+                return BadRequest("Такой номер");
+             _context.Entry(pair).State = EntityState.Modified;
+             await _context.SaveChangesAsync();
             return Ok();
         }
 
@@ -156,6 +167,8 @@ namespace DanceTournamentRun.ApiControllers
             return Ok();
         }
 
+        //POST: api/Referee/{token}/setScore
+        //set registration complete state for all registrator's groups
         [HttpGet("complete")]
         public async Task<ActionResult> CompleteRegistration(string token)
         {
