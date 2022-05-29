@@ -208,4 +208,4 @@ CREATE PROCEDURE GetAllTournUsers
 	Join UsersTournaments as usTr ON usTr.UserId = u.Id
 	Where usTr.TournamentId = @tournId;
 GO 
-
+ 

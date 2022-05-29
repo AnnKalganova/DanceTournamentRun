@@ -31,7 +31,7 @@ GO
 
 CREATE TABLE [dbo].[Scores](
 	[Id] [bigint] IDENTITY(1,1) NOT NULL,
-	[ProgressId] [bigint] NOT NULL,
+	[ProgressId] [bigint] NULL,
 	[PairId] [bigint] NOT NULL,
 	[Score] [int] NULL,
 	 CONSTRAINT [PK_dbo.Scores] PRIMARY KEY CLUSTERED 
@@ -43,6 +43,7 @@ GO
 
 ALTER TABLE [dbo].[Scores]  WITH CHECK ADD  CONSTRAINT [FK_dbo.Scores_dbo.RefereeProgress_ProgressId] FOREIGN KEY([ProgressId])
 REFERENCES [dbo].[RefereeProgress] ([Id])
+
 GO
 ALTER TABLE [dbo].[Scores] CHECK CONSTRAINT [FK_dbo.Scores_dbo.RefereeProgress_ProgressId]
 GO
@@ -77,3 +78,34 @@ ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Scores] CHECK CONSTRAINT [FK_dbo.Scores_dbo.Pairs_PairId]
 GO
+
+--Version 29.05 
+DROP TABLE [dbo].[Scores];
+go 
+
+CREATE TABLE [dbo].[Scores](
+	[Id] [bigint] IDENTITY(1,1) NOT NULL,
+	[ProgressId] [bigint] Default(0) NOT NULL,
+	[PairId] [bigint] NOT NULL,
+	[Score] [int] NULL,
+	 CONSTRAINT [PK_dbo.Scores] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Scores]  WITH CHECK ADD  CONSTRAINT [FK_dbo.Scores_dbo.RefereeProgress_ProgressId] FOREIGN KEY([ProgressId])
+REFERENCES [dbo].[RefereeProgress] ([Id])
+GO
+ALTER TABLE [dbo].[Scores] CHECK CONSTRAINT [FK_dbo.Scores_dbo.RefereeProgress_ProgressId]
+GO
+ALTER TABLE [dbo].[Scores]  WITH CHECK ADD  CONSTRAINT [FK_dbo.Scores_dbo.Pairs_PairId] FOREIGN KEY([PairId])
+REFERENCES [dbo].[Pairs] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Scores] CHECK CONSTRAINT [FK_dbo.Scores_dbo.Pairs_PairId]
+GO
+
+-- Manually select table Scores -> keys -> double click on RefereeProgress FK.
+-- Next, find Table Design -> UPDATE and DELETE property. In it on Delete Rule select Set Default.

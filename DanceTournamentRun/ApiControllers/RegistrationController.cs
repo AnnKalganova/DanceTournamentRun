@@ -106,13 +106,13 @@ namespace DanceTournamentRun.ApiControllers
                 countSimilarP1 = db.FindSimilarPartner(pair.GroupId, pair.Partner1LastName, pair.Partner1FirstName);
                 countSimilarP2 = db.FindSimilarPartner(pair.GroupId, pair.Partner2LastName, pair.Partner2FirstName);
             }
-            var simularNumber = _context.Pairs.First(p => p.Id != pair.Id && p.Number == pair.Number);
+            var simularNumber = _context.Pairs.First(p => p.Id != pair.Id && p.Number == pair.Number && p.GroupId == pair.GroupId);
             if (countSimilarP1 != 0)
                 return BadRequest("Такой партнер уже участвует в группе");
             else if (countSimilarP2 != 0)
                 return BadRequest("Такая партнерша уже учавствует в группе");
             if (simularNumber != null)
-                return BadRequest("Такой номер");
+                return BadRequest("Такой номер присвоен дургой паре");
              _context.Entry(pair).State = EntityState.Modified;
              await _context.SaveChangesAsync();
             return Ok();
@@ -121,7 +121,7 @@ namespace DanceTournamentRun.ApiControllers
         //POST:api/Registration/{token}/createPair
         // create pair by pair object from body with token verification
         [HttpPost("createPair")]
-        public async Task<IActionResult> CreatePair(string token,[FromBody] CreatePairModel pair)
+        public async Task<ActionResult<string>> CreatePair(string token,[FromBody] CreatePairModel pair)
         {
             int access;
             using (ApplicationDbContext db = new ApplicationDbContext())
@@ -132,7 +132,19 @@ namespace DanceTournamentRun.ApiControllers
             {
                 return NotFound();
             }
-            //TODO проверка на то что такая пара\номер уже есть
+            int countSimilarP1, countSimilarP2;
+            using (ApplicationDbContext db = new ApplicationDbContext())
+            {
+                countSimilarP1 = db.FindSimilarPartner(pair.GroupId, pair.Partner1LastName, pair.Partner1FirstName);
+                countSimilarP2 = db.FindSimilarPartner(pair.GroupId, pair.Partner2LastName, pair.Partner2FirstName);
+            }
+            var simularNumber = _context.Pairs.First(p => p.GroupId == pair.GroupId && p.Number == pair.Number);
+            if (countSimilarP1 != 0)
+                return BadRequest("Такой партнер уже участвует в группе");
+            else if (countSimilarP2 != 0)
+                return BadRequest("Такая партнерша уже учавствует в группе");
+            if (simularNumber != null)
+                return BadRequest("Такой номер присвоен другой паре");
             Pair newPair = new Pair()
             {
                 GroupId = pair.GroupId,

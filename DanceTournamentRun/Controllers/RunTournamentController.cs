@@ -436,6 +436,7 @@ namespace DanceTournamentRun.Controllers
             {
                 return NotFound();
             }
+           
             var groups = _context.Groups.Where(gr=> gr.TournamentId == tournId).ToList();
             foreach (var group in groups)
             {
@@ -448,12 +449,13 @@ namespace DanceTournamentRun.Controllers
                 _context.Groups.Remove(group);
                 await _context.SaveChangesAsync();
             }
-            var referees = _context.GetAllTournUsers(tournId);
-            foreach (var referee in referees)
+            var users = _context.GetAllTournUsers(tournId);
+            foreach (var user in users)
             {
-                _context.Users.Remove(referee);
+                _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
             }
+
             _context.Tournaments.Remove(tournament);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "RunTournament");
