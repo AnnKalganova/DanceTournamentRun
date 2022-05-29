@@ -76,7 +76,7 @@ namespace DanceTournamentRun.ApiControllers
                 return NotFound();
             var dances = _context.GetDances(grId);
             var userId = _context.Users.First(u => u.SecurityToken == token).Id;
-            HeatInfo heatInfo = new HeatInfo() { PairsInfo = new List<HeatPairInfo>()};
+            HeatInfo heatInfo = new HeatInfo() { RefProgressId = 0, PairsInfo = new List<HeatPairInfo>()};
             foreach(var dance in dances)
             {
                 RefereeProgress progress = _context.RefereeProgresses.Where(r => r.DanceId == dance.Id && r.UserId == userId && r.IsCompleted == false)
@@ -89,6 +89,8 @@ namespace DanceTournamentRun.ApiControllers
                     break;
                 }
             }
+            if (heatInfo.RefProgressId == 0)
+                return BadRequest("Судейство данной группы завершено!");
             var scores = _context.Scores.Where(s => s.ProgressId == heatInfo.RefProgressId).ToList();
             foreach(var score in scores)
             {
