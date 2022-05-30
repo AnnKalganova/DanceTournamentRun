@@ -335,8 +335,8 @@ namespace DanceTournamentRun.Controllers
                 int countSimilarP1, countSimilarP2;
                 using (ApplicationDbContext db = new ApplicationDbContext())
                 {
-                    countSimilarP1 = db.FindSimilarPartner(model.GroupId, model.Partner1LastName, model.Partner1FirstName);
-                    countSimilarP2 = db.FindSimilarPartner(model.GroupId, model.Partner2LastName, model.Partner2FirstName);
+                    countSimilarP1 = db.FindSimilarPartner(model.GroupId, 0, model.Partner1LastName, model.Partner1FirstName);
+                    countSimilarP2 = db.FindSimilarPartner(model.GroupId, 0, model.Partner2LastName, model.Partner2FirstName);
                 }
                 if(countSimilarP1 == 0 && countSimilarP2 == 0)
                 {
@@ -367,7 +367,7 @@ namespace DanceTournamentRun.Controllers
                     int countSimilar;
                     using (ApplicationDbContext db = new ApplicationDbContext())
                     {
-                        countSimilar = db.FindSimilarPartner(oldPair.GroupId, editPair.Partner1LastName, editPair.Partner1FirstName);
+                        countSimilar = db.FindSimilarPartner(oldPair.GroupId, oldPair.Id,editPair.Partner1LastName, editPair.Partner1FirstName);
                     }
                     if (countSimilar == 0)
                     {
@@ -382,7 +382,7 @@ namespace DanceTournamentRun.Controllers
                     int countSimilar;
                     using (ApplicationDbContext db = new ApplicationDbContext())
                     {
-                        countSimilar = db.FindSimilarPartner(oldPair.GroupId, editPair.Partner2LastName, editPair.Partner2FirstName);
+                        countSimilar = db.FindSimilarPartner(oldPair.GroupId, oldPair.Id,editPair.Partner2LastName, editPair.Partner2FirstName);
                     }
                     if (countSimilar == 0)
                     {

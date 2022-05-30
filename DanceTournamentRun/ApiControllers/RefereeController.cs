@@ -118,11 +118,11 @@ namespace DanceTournamentRun.ApiControllers
         //POST: api/Referee/{token}/complete
         //set complete state on referee progress
         [HttpPost("complete")]
-        public async Task<ActionResult> CompleteRefereeing (string token, long refProgressId)
+        public async Task<ActionResult> CompleteRefereeing (string token, [FromBody] RefScoreSet scoreSet)
         {
-            if (!isThisRefereesProgress(token, refProgressId))
+            if (!isThisRefereesProgress(token, scoreSet.RefProgressId))
                 return NotFound();
-            var progress = _context.RefereeProgresses.Find(refProgressId);
+            var progress = _context.RefereeProgresses.Find(scoreSet.RefProgressId);
             progress.IsCompleted = true;
             await _context.SaveChangesAsync();
             return Ok();
@@ -131,7 +131,7 @@ namespace DanceTournamentRun.ApiControllers
         private bool isThisRefereesProgress( string token, long refProgId)
         {
             var userId = _context.Users.FirstOrDefault(u => u.SecurityToken == token).Id;
-            var progress = _context.RefereeProgresses.First(r => r.Id == refProgId && r.UserId == userId);
+            var progress = _context.RefereeProgresses.FirstOrDefault(r => r.Id == refProgId && r.UserId == userId);
             if (progress == null)
                 return false;
             return true;

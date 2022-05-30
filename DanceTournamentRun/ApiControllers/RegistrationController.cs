@@ -103,10 +103,10 @@ namespace DanceTournamentRun.ApiControllers
             int countSimilarP1, countSimilarP2;
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
-                countSimilarP1 = db.FindSimilarPartner(pair.GroupId, pair.Partner1LastName, pair.Partner1FirstName);
-                countSimilarP2 = db.FindSimilarPartner(pair.GroupId, pair.Partner2LastName, pair.Partner2FirstName);
+                countSimilarP1 = db.FindSimilarPartner(pair.GroupId, pair.Id ,pair.Partner1LastName, pair.Partner1FirstName);
+                countSimilarP2 = db.FindSimilarPartner(pair.GroupId, pair.Id, pair.Partner2LastName, pair.Partner2FirstName);
             }
-            var simularNumber = _context.Pairs.First(p => p.Id != pair.Id && p.Number == pair.Number && p.GroupId == pair.GroupId);
+            var simularNumber = pair.Number == null ? null : _context.Pairs.FirstOrDefault(p => p.Id != pair.Id && p.Number == pair.Number && p.GroupId == pair.GroupId);
             if (countSimilarP1 != 0)
                 return BadRequest("Такой партнер уже участвует в группе");
             else if (countSimilarP2 != 0)
@@ -135,10 +135,10 @@ namespace DanceTournamentRun.ApiControllers
             int countSimilarP1, countSimilarP2;
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
-                countSimilarP1 = db.FindSimilarPartner(pair.GroupId, pair.Partner1LastName, pair.Partner1FirstName);
-                countSimilarP2 = db.FindSimilarPartner(pair.GroupId, pair.Partner2LastName, pair.Partner2FirstName);
+                countSimilarP1 = db.FindSimilarPartner(pair.GroupId, 0, pair.Partner1LastName, pair.Partner1FirstName);
+                countSimilarP2 = db.FindSimilarPartner(pair.GroupId, 0, pair.Partner2LastName, pair.Partner2FirstName);
             }
-            var simularNumber = _context.Pairs.First(p => p.GroupId == pair.GroupId && p.Number == pair.Number);
+            var simularNumber = pair.Number == null ? null : _context.Pairs.FirstOrDefault(p => p.GroupId == pair.GroupId && p.Number == pair.Number);
             if (countSimilarP1 != 0)
                 return BadRequest("Такой партнер уже участвует в группе");
             else if (countSimilarP2 != 0)

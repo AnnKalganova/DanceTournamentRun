@@ -94,12 +94,12 @@ go
 --Version from 18.05 19:12
 
 CREATE PROCEDURE FindSimilarPartner
- @groupId bigint, @lastName nvarchar(40), @firstName nvarchar(40), @count int OUTPUT
+ @groupId bigint, @pairId bigint, @lastName nvarchar(40), @firstName nvarchar(40), @count int OUTPUT
 	AS
 	SELECT @count = COUNT(p.Id)
 	FROM Pairs as p
 	Where  p.GroupId = @groupId and ((p.Partner1LastName =  @lastName and p.Partner1FirstName =@firstName )
-	or (p.Partner2LastName = @lastName and p.Partner2FirstName = @firstName));
+	or (p.Partner2LastName = @lastName and p.Partner2FirstName = @firstName)) and p.Id != @pairId;
 go
 
 

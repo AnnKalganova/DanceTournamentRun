@@ -76,13 +76,14 @@ namespace DanceTournamentRun.Models
             return groups;
         }
 
-        public int FindSimilarPartner(long grId, string lastName, string firstName)
+        public int FindSimilarPartner(long grId, long pairId, string lastName, string firstName)
         {
             SqlParameter grIdParam = new SqlParameter("@groupId", grId); 
+            SqlParameter pairIdParam = new SqlParameter("@pairId", pairId); 
             SqlParameter lNameParam = new SqlParameter { ParameterName = "@lastName", Value = lastName, SqlDbType = System.Data.SqlDbType.NVarChar, Size = 40 };
             SqlParameter FNameParam = new SqlParameter { ParameterName = "@firstName", Value = firstName, SqlDbType = System.Data.SqlDbType.NVarChar, Size = 40 };
             SqlParameter countParam = new SqlParameter { ParameterName = "@count", SqlDbType = System.Data.SqlDbType.Int, Direction = System.Data.ParameterDirection.Output };
-            Database.ExecuteSqlRaw("FindSimilarPartner @groupId, @lastName, @firstName, @count OUT", grIdParam, lNameParam, FNameParam, countParam);
+            Database.ExecuteSqlRaw("FindSimilarPartner @groupId, @pairId, @lastName, @firstName, @count OUT", grIdParam, pairIdParam, lNameParam, FNameParam, countParam);
             return (int)countParam.Value;
         }
 
