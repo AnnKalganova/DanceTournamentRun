@@ -149,7 +149,7 @@ CREATE PROCEDURE GetCurrentGroup
 	AS 
 	SELECT TOP 1 *
 	FROM Groups as gr
-	WHERE gr.TournamentId = @tournId and gr.CompetitionState = 1 or gr.CompetitionState = 2
+	WHERE gr.TournamentId = @tournId and (gr.CompetitionState = 1 or gr.CompetitionState = 2)
 	ORDER BY gr.Number;
 go 
 

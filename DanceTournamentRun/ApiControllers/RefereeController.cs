@@ -90,7 +90,7 @@ namespace DanceTournamentRun.ApiControllers
                 }
             }
             if (heatInfo.RefProgressId == 0)
-                return BadRequest("Судейство данной группы завершено!");
+                return heatInfo;
             var scores = _context.Scores.Where(s => s.ProgressId == heatInfo.RefProgressId).ToList();
             foreach(var score in scores)
             {
