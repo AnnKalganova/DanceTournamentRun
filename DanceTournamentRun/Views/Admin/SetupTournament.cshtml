@@ -47,41 +47,114 @@
 </div>
 
 
-<!--<ul class="nav nav-tabs ">-->
-@*col-md-6*@
-<!--<li class="nav-item"><a onclick="viewGroups(@Model.Id)" class="nav-link" data-toggle="tab" href="#groups">Группы</a></li>
-    <li class="nav-item"><a onclick="viewPairs(@Model.Id)" class="nav-link" data-toggle="tab" href="#pairs">Пары</a></li>
-    <li class="nav-item"><a onclick="viewReferees(@Model.Id)" class="nav-link" data-toggle="tab" href="#referees">Судьи</a></li>
-    <li class="nav-item"><a onclick="viewRegistrators(@Model.Id)" class="nav-link" data-toggle="tab" href="#registrators">Организаторы</a></li>
-    <li class="nav-item"><a onclick="runTournament(@Model.Id)" class="nav-link btn btn-info ">Начать турнир</a></li>
-    <li class="nav-item"></li>
-</ul>
+<div class="modal fade" id="dialogAddGroup" tabindex="-1" role="dialog" aria-labelledby="dialogAddGroupCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dialogAddGroupCenterTitle">Добавление группы</h5>
+                <button id="closeAddGrp" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
 
-<button type="button" class="btn btn-outline-info rn-btn rounded-pill">
-    Начать турнир
-</button>
-
-
-
-<div class="tab-content">
-    <div id="groups" class="tab-pane">
-        <div id="groupsTable">
+            <div class="modal-body">
+                <form id="addGrForm" asp-anti-forgery="true">
+                    <div class="validation" asp-validation-summary="ModelOnly"></div>
+                    <input type="hidden" id="postId" name="TournamentId" value="@Model.Id">
+                    <div>
+                        <div class="form-group">
+                            <label asp-for="Name" class="col-form-label">Название</label>
+                            <input id="groupName" type="text" asp-for="Name" class="form-control" autocomplete="on" placeholder="Введите название группы" />
+                            <span asp-validation-for="Name" />
+                        </div>
+                        <label class="control-label" for="dances">Танцы:</label>
+                        <div class="control-group" id="dances">
+                            <div class="controls controls-add">
+                                <div class="entry entry-add input-group form-group">
+                                    <input class="form-control form-control-add" name="Dances[0]" placeholder="Введите название танца" type="text">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-success btn-add" type="button">
+                                            <span class="oi oi-plus" title="plus" aria-hidden="true"></span>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <small>Нажмите  <span class="oi oi-plus" title="minus" aria-hidden="true"></span> чтобы добавить еще один танец :)</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelAddGrp" type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button id="submitAddGrp" type="submit" form="addGrForm" class="btn btn-primary" data-dismiss="modal">Сохранить</button>
+            </div>
 
         </div>
     </div>
-    <div id="pairs" class="tab-pane">
-        <div id="pairsTable">
+</div>
 
+<div class="modal fade" id="dialogDeleteGroup" tabindex="-1" role="dialog" aria-labelledby="dialogDeleteGroupCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form id="delGrForm" asp-anti-forgery="true">
+                    <input id="delGrId" type="hidden" name="groupId" value="">
+                    <label class="col-form-label"> Вы уверены, что хотите удалить группу <strong><span id="delGrName"> </span></strong>?</label>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelDelGrp" type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button id="submitDelGrp" type="submit" form="delGrForm" class="btn btn-primary" data-dismiss="modal">Удалить</button>
+            </div>
         </div>
     </div>
-    <div id="referees" class="tab-pane">
-        <div id="refereesTable">
+</div>
 
+<div class="modal fade" id="dialogEditGroup" tabindex="-1" role="dialog" aria-labelledby="dialogEditGroupCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dialogEditGroupCenterTitle">Редактирование группы</h5>
+                <button id="closeEditGrp" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editGrForm" asp-anti-forgery="true">
+
+                    <input type="hidden" id="editGroupId" name="GroupId" value="">
+                    <div>
+                        <div class="form-group">
+                            <label for="Number" class="col-form-label">Порядок</label>
+                            <input id="editGroupNumber" type="text" name="Number" class="form-control" autocomplete="on" placeholder="Введите порядок группы" />
+
+                            <label for="Name" class="col-form-label">Название</label>
+                            <input id="editGroupName" type="text" name="Name" class="form-control" autocomplete="on" placeholder="Введите название группы" />
+
+                        </div>
+                        <label class="control-label" for="dances">Танцы:</label>
+                        <div class="control-group" id="dances">
+                            <div class="controls controls-edit">
+                                <div class="entry entry-edit input-group form-group">
+                                    <input id="grEditInput" class="form-control form-control-edit" name="Dances[0]" placeholder="Введите название танца" type="text">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-success btn-addE" type="button">
+                                            <span class="oi oi-plus" title="plus" aria-hidden="true"></span>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <small>Нажмите  <span class="oi oi-plus" title="minus" aria-hidden="true"></span> чтобы добавить еще один танец :)</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelEditGrp" type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button id="submitEditGrp" type="submit" form="editGrForm" class="btn btn-primary" data-dismiss="modal">Сохранить</button>
+            </div>
         </div>
     </div>
-    <div id="registrators" class="tab-pane">
-        <div id="registratorsTable">
+</div>
 
-        </div>
-    </div>
-</div>-->
+<script src="~/js/SetGroup.js" asp-append-version="true"></script>

@@ -3,8 +3,8 @@
 <table class="table table-bordered ">
     <thead>
         <tr>
-            <th scope="col" class="col-md-1" class="text-center">Место</th>
-            <th sope="col" class=" col-md-1" class="text-center">Номер пары</th>
+            <th scope="col" class="col-md-1 text-center">Место</th>
+            <th sope="col" class=" col-md-1 text-center">Номер пары</th>
             <th sope="col" class=" col-md-4">Партнер - Партнерша</th>
         </tr>
     </thead>
@@ -23,6 +23,6 @@
 </table>
 
 <div class="d-flex justify-content-end">
-    <a asp-action="GetResultsToPrint" asp-controller="RunTournament" asp-route-results="@Json.Serialize(Model)" target="_blank" class="btn btn-info rounded-pill rn-btn">Печать</a>
+    <a asp-action="GetResultsToPrint" asp-controller="RunTournament" asp-route-results="@Json.Serialize(Model)" asp-route-groupName="@ViewBag.groupName"  target="_blank" class="btn btn-info rounded-pill rn-btn">Печать</a>
 
 </div>

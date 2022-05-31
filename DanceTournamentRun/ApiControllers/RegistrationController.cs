@@ -90,7 +90,7 @@ namespace DanceTournamentRun.ApiControllers
         //POST: api/Registration/{token}/updatePair/{pair}
         //update pair by pair object with token verification
         [HttpPost("updatePair")]
-        public async Task<ActionResult<string>> UpdatePair(string token,[FromBody] Pair pair)
+        public async Task<StatusCodeResult> UpdatePair(string token,[FromBody] Pair pair)
         {
             int access;
             using (ApplicationDbContext db = new ApplicationDbContext())
@@ -108,11 +108,11 @@ namespace DanceTournamentRun.ApiControllers
             }
             var simularNumber = pair.Number == null ? null : _context.Pairs.FirstOrDefault(p => p.Id != pair.Id && p.Number == pair.Number && p.GroupId == pair.GroupId);
             if (countSimilarP1 != 0)
-                return BadRequest("Такой партнер уже участвует в группе");
+                return StatusCode(1);
             else if (countSimilarP2 != 0)
-                return BadRequest("Такая партнерша уже учавствует в группе");
+                return StatusCode(2);
             if (simularNumber != null)
-                return BadRequest("Такой номер присвоен дургой паре");
+                return StatusCode(3);
              _context.Entry(pair).State = EntityState.Modified;
              await _context.SaveChangesAsync();
             return Ok();

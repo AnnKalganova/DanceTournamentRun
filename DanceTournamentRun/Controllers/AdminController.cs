@@ -205,18 +205,18 @@ namespace DanceTournamentRun.Controllers
                     {
                         var dance = db.Dances.Find(id);
                         dance.Name = newDances[i] != dance.Name ? newDances[i] : dance.Name;
-                        db.SaveChangesAsync();
+                        db.SaveChanges();
                         i++;
                     }
                     for (var k = i; k < newDances.Length; k++)
                     {
                         Dance addDance = new Dance { Name = newDances[k] };
                         db.Dances.Add(addDance);
-                        db.SaveChangesAsync();
+                        db.SaveChanges();
 
                         GroupsDance groupsDance = new GroupsDance { GroupId = grId, DanceId = addDance.Id };
                         db.GroupsDances.Add(groupsDance);
-                        db.SaveChangesAsync();
+                        db.SaveChanges();
                     }
                 }
             }
@@ -229,14 +229,14 @@ namespace DanceTournamentRun.Controllers
                     {
                         var dance = db.Dances.Find(dancesId[i]);
                         dance.Name = dName != dance.Name ? dName : dance.Name;
-                        db.SaveChangesAsync();
+                        db.SaveChanges();
                         i++;
                     }
                     for (var k = i; k < dancesId.Count(); k++)
                     {
                         var delDance = db.Dances.Find(dancesId[k]);
                         db.Dances.Remove(delDance);
-                        db.SaveChangesAsync();
+                        db.SaveChanges();
                     }
                 }
             }

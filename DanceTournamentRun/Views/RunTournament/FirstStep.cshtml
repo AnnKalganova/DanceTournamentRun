@@ -17,7 +17,7 @@
             <a asp-action="GetRegQR" asp-controller="RunTournament" asp-route-tournId=@Model.Id target="_blank" class="btn btn-info rounded-pill rn-btn mr-2">QR организаторов</a>
             <a asp-action="GetRefereeQR" asp-controller="RunTournament" asp-route-tournId=@Model.Id target="_blank" class="btn btn-info rounded-pill rn-btn">QR судей</a>
         </div>
-        <a id="goStep2" class="btn btn-info rounded-pill rn-btn"
+        <a id="goStep2" class="btn btn-info rounded-pill rn-btn disabled"
                  asp-action="GoToStepTwo" asp-controller="RunTournament" asp-route-tournId=@Model.Id>
             <span class="oi oi-chevron-right" aria-hidden="true" ></span> Шаг 2
         </a>
@@ -28,15 +28,14 @@
 <script>
 
     
-    let button = document.getElementById('goStep2');
-    button.disabled = true;
+
     const timer =  setInterval(function () {
         $('#regProgress').load('/RunTournament/UpdateRegProgress/@Model.Id', function () {
             if ($('.progress-bar').attr('aria-valuenow') === $('.progress-bar').attr('aria-valuemax')) {
-                button.disabled = false;
+                $('#goStep2').removeClass('disabled');
                 clearInterval(timer);
             } else {
-                button.disabled = true;
+                $('#goStep2').addClass('disabled');
             }
         });
     }, 6000)

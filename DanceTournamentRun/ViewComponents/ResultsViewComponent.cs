@@ -13,7 +13,7 @@ namespace DanceTournamentRun.ViewComponents
 
         public ResultsViewComponent(ApplicationDbContext context) => db = context;
 
-        public async Task<IViewComponentResult> InvokeAsync(Dictionary<long, int> orderedPairs)
+        public async Task<IViewComponentResult> InvokeAsync(Dictionary<long, int> orderedPairs, string groupName)
         {
             List<ResultsViewModel> results = new List<ResultsViewModel>();
             foreach (var pairInfo in orderedPairs)
@@ -29,6 +29,7 @@ namespace DanceTournamentRun.ViewComponents
                 };
                 results.Add(model);
             }
+            ViewBag.groupName = groupName;
             return View(results);
         }
     }

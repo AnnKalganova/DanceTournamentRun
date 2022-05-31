@@ -11,6 +11,11 @@ close.addEventListener('click', function () {
     groupName.value = "";
 });
 
+$('#dialogAddGroup').on('show.bs.modal', function (event) {
+    groupName.value = "";
+    $(event.currentTarget).find('input[name="Dances[0]"]').val("");
+})
+
 $('#submitAddGrp').on('click', function (e) {
     e.preventDefault();
     $.ajax({
@@ -51,6 +56,18 @@ $(document).on('click', '.btn-remove', function (event) {
     var inputs = $('.controls-add .form-control-add');
     $.each(inputs, function (index, item) {
         item.name = 'Dances[' + index + ']';
+    });
+});
+
+$("#dialogAddGroup").on('hidden.bs.modal', function (e) {
+    $(".entry-add:not(:last)").each(function () {
+        $(this).remove();
+    });
+
+    var inputs = $('.controls-add .form-control-add');
+    $.each(inputs, function (index, item) {
+        item.name = 'Dances[' + index + ']';
+
     });
 });
 

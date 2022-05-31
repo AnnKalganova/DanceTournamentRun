@@ -174,6 +174,7 @@ namespace DanceTournamentRun.Controllers
                     case 2:
                         var nextGr = _context.Groups.FirstOrDefault(g => g.TournamentId == group.TournamentId && g.Number == group.Number + 1);
                         ViewBag.nextGr = nextGr == null ? null : nextGr.Name.Replace("_"," ");
+                        ViewBag.nextGrId = nextGr == null ? 0 : nextGr.Id;
                         return PartialView("RefereeProcess", group);
                 }
             }
@@ -299,18 +300,27 @@ namespace DanceTournamentRun.Controllers
             {
                 return NotFound();
             }
-            var danceId = _context.GroupsDances.First(d => d.GroupId == groupId).Id;
+            var danceId = _context.GroupsDances.First(d => d.GroupId == groupId).DanceId;
             var refereeId = _context.GetRefereesByGroupId((long)groupId)[0].Id;
             var refProgresses = _context.GetHeats(refereeId, danceId);
             Dictionary<int, List<int>> heats = new Dictionary<int, List<int>>();
             foreach (var progress in refProgresses)
             {
-                heats.Add(progress.Heat, new List<int>());
+                if(!heats.ContainsKey(progress.Heat))
+                    heats.Add(progress.Heat, new List<int>());
                 var pairsInHeat = _context.GetPairsByRefProgress(progress.Id);
                 foreach (var pair in pairsInHeat)
                 {
                     heats[progress.Heat].Add((int)pair.Number);
                 }
+            }
+            var grname = _context.Groups.Find(groupId).Name;
+            ViewBag.groupName = grname.Replace("_", " ");
+            var keys = heats.Keys.ToList();
+            for (var i = 0; i < keys.Count; i++)
+            {
+                var key = keys[i];
+                heats[key] = heats[key].OrderBy(v => v).ToList();
             }
             return View("HeatsToPrint", heats);
         }
@@ -338,7 +348,6 @@ namespace DanceTournamentRun.Controllers
 
         public async Task<ActionResult> GetResults(long groupId)
         {
-            //TODO разделить на более мелкие 
             var pairs = _context.Pairs.Where(p => p.GroupId == groupId).ToList();
             if(pairs == null)
             {
@@ -352,56 +361,45 @@ namespace DanceTournamentRun.Controllers
             }
             pairsScores = pairsScores.OrderByDescending(p => p.Value).ToDictionary(x => x.Key, x => x.Value);
             var isResultExist = _context.Results.FirstOrDefault(r => r.PairId == pairsScores.ElementAt(0).Key);
+            var groupName = _context.Groups.Find(groupId).Name;
             if(isResultExist != null)
             {
                 return ViewComponent("Results",
                 new
                 {
-                    orderedPairs = pairsScores
+                    orderedPairs = pairsScores,
+                    groupName = groupName
                 });
             }
-            List<int> resDevisions = new List<int>();
-            int defaultDevision = pairs.Count / 3;
-            int index = defaultDevision;
-            //TODO проверка чтоб разделение не дощло до конца 
-            while(index < pairs.Count)
-            {
-                if (pairsScores.ElementAt(index-1).Value == pairsScores.ElementAt(index).Value)
-                {
-                    index -= 1;
-                }
-                else
-                {
-                    resDevisions.Add(index);
-                    defaultDevision *= 2;
-                    index = defaultDevision;
-                }
-            }
-            resDevisions.Add(pairs.Count);
 
             var position = 1;
-            var i = 0;
-            foreach(var dev in resDevisions)
+            AddResult(pairsScores.ElementAt(0).Key, position);
+            for (var k = 1; k < pairsScores.Count; k++)
             {
-                while (i < dev)
-                {
-                    Result result = new Result() { PairId = pairsScores.ElementAt(i).Key, Position = position };
-                    _context.Results.Add(result);
-                    await _context.SaveChangesAsync();
-                    i++;
-                }
-                position++;
+                if (pairsScores.ElementAt(k - 1).Value != pairsScores.ElementAt(k).Value)
+                    if (position != 4)
+                        position++;
+                AddResult(pairsScores.ElementAt(k).Key, position);
             }
             return ViewComponent("Results",
                 new
                 {
-                    orderedPairs = pairsScores
+                    orderedPairs = pairsScores,
+                    groupName = groupName
                 });
         }
 
-        public ActionResult GetResultsToPrint(string results)
+        private void AddResult(long pairId, int position)
+        {
+            Result result = new Result() { PairId = pairId, Position = position };
+            _context.Results.Add(result);
+            _context.SaveChanges();
+        }
+
+        public ActionResult GetResultsToPrint(string results, string groupName)
         {
             List<ResultsViewModel> resultsViews = JsonConvert.DeserializeObject<List<ResultsViewModel>>(results);
+            ViewBag.groupName = groupName.Replace("_", " ");
             return View("ResultsToPrint", resultsViews);
         }
 
@@ -436,28 +434,41 @@ namespace DanceTournamentRun.Controllers
             {
                 return NotFound();
             }
-           
-            var groups = _context.Groups.Where(gr=> gr.TournamentId == tournId).ToList();
+
+            var groups = _context.Groups.Where(gr => gr.TournamentId == tournId).ToList();
             foreach (var group in groups)
             {
-                var dances = _context.GetDances(group.Id);
-                foreach (var dance in dances)
-                {
-                    _context.Dances.Remove(dance);
-                    await _context.SaveChangesAsync();
-                }
                 _context.Groups.Remove(group);
                 await _context.SaveChangesAsync();
             }
+
+            var referees = _context.GetRefereesByTourn(tournId);
+            foreach(var referee in referees)
+            {
+                var dancesId = _context.RefereeProgresses.Where(p => p.UserId == referee.Id).Select(d=>d.DanceId);
+                foreach(var danceId in dancesId)
+                {
+                    using (ApplicationDbContext db = new ApplicationDbContext())
+                    {
+                        var dance = db.Dances.Find(danceId);
+                        if(dance != null)
+                        {
+                            db.Dances.Remove(dance);
+                            db.SaveChanges();
+                        }
+                    }
+                }
+            }
+           
             var users = _context.GetAllTournUsers(tournId);
+            _context.Tournaments.Remove(tournament);
+            _context.SaveChanges();
             foreach (var user in users)
             {
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
             }
-
-            _context.Tournaments.Remove(tournament);
-            await _context.SaveChangesAsync();
+            var lastword = "goodbay";
             return RedirectToAction("Index", "RunTournament");
         }
     }
